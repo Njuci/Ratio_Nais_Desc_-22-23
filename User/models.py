@@ -36,7 +36,9 @@ class MyUser(AbstractBaseUser):
     REQUIRED_FIELDS=['password']
     USERNAME_FIELD = 'username'
     objects=CustomUserManager()
-    def has_module_perms(self):
+    def has_perm(self,perms):
+        return True
+    def has_module_perms(self,app_label):
         return True
 class Commune(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
