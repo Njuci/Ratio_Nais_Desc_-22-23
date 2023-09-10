@@ -39,7 +39,7 @@ class MyUser(AbstractBaseUser):
     def has_perm(self,perms):
         return True
     def has_module_perms(self,app_label):
-        return True
+        return True 
     class Meta:
         verbose_name='User'
         verbose_name_plural='Users'
