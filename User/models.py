@@ -60,11 +60,11 @@ class Hopital(models.Model):
     denom=models.CharField(max_length=70,blank=True)
     prov=models.ForeignKey(province,on_delete=models.PROTECT)
     TerriVi=models.ForeignKey(TerriVille,on_delete=models.PROTECT) 
-    nom_bour=models.CharField(max_length=9)   
+    numeros_id=models.CharField(max_length=40,unique=True)   
     def __str__(self) -> str:
         return self.denom
     class Meta:
         verbose_name='Hopital'
-        verbose_name_plural='Hopitals'
+        verbose_name_plural='Hopitaux'
         
         
