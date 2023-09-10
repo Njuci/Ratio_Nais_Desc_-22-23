@@ -40,6 +40,9 @@ class MyUser(AbstractBaseUser):
         return True
     def has_module_perms(self,app_label):
         return True
+    class Meta:
+        verbose_name='User'
+        verbose_name_plural='Users'
 class Commune(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     denom=models.CharField(max_length=70,blank=True)
@@ -48,3 +51,20 @@ class Commune(models.Model):
     nom_bour=models.CharField(max_length=9)   
     def __str__(self) -> str:
         return self.denom
+    class Meta:
+        verbose_name='Commune'
+        verbose_name_plural='Communes'
+        
+class Hopital(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    denom=models.CharField(max_length=70,blank=True)
+    prov=models.ForeignKey(province,on_delete=models.PROTECT)
+    TerriVi=models.ForeignKey(TerriVille,on_delete=models.PROTECT) 
+    nom_bour=models.CharField(max_length=9)   
+    def __str__(self) -> str:
+        return self.denom
+    class Meta:
+        verbose_name='Hopital'
+        verbose_name_plural='Hopitals'
+        
+        
