@@ -1,21 +1,22 @@
 from .models import Commune,MyUser
-user=MyUser.objects.create_user(username="mec",password="mec")
-com=Commune.objects.create(user=user,prov=1,TerriVi=1,nom_bour='damiel')
-
- 
-
 from django.contrib.auth.models import Group, Permission
-
-# Créer un groupe pour les clients
-client_group, created = Group.objects.get_or_create(name='Client')
+"""
+# Créer un groupe pour les commune
+commune_group, created = Group.objects.get_or_create(name='CommuneGroup')
+#créer un groupe pour les hopitals
+hospital_group, created = Group.objects.get_or_create(name='HospitalGroup')
 
 # Créer un groupe pour les administrateurs
 admin_group, created = Group.objects.get_or_create(name='Administrateur')
 
 
-# Autorisations pour les clients
-client_permissions = Permission.objects.filter(codename__in=['can_view_profile', 'can_edit_profile'])
-client_group.permissions.add(*client_permissions)
+# Autorisations pour les commune
+commune_permissions = Permission.objects.filter(codename__in=['can_view_profile', 'can_edit_profile'])
+commune_group.permissions.add(*commune_permissions)
+# Autorisations pour les hopitaux
+hospital_permissions = Permission.objects.filter(codename__in=['can_view_profile', 'can_edit_profile'])
+hospital_group.permissions.add(*hospital_permissions)
+
 
 # Autorisations pour les administrateurs
 admin_permissions = Permission.objects.filter(codename__in=['can_manage_users', 'can_edit_settings'])
@@ -35,3 +36,4 @@ user_client.groups.add(client_group)  # Ajoutez l'utilisateur au groupe "Client"
 user_admin = User.objects.create_user(username='bob', password='password')
 admin = Administrateur.objects.create(user=user_admin, department='IT', role='Manager')
 user_admin.groups.add(admin_group)  # Ajoutez l'utilisateur au groupe "Administrateur"
+"""

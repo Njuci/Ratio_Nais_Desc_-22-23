@@ -5,4 +5,4 @@ admin.site.register(province)
 admin.site.register(TerriVille)
 admin.site.register(Commune)
 
-# Register your models here.
+#Register your models here.

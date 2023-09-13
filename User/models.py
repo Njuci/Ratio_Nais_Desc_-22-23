@@ -28,10 +28,12 @@ class TerriVille(models.Model):
         verbose_name='Ville ou Territoire'
         verbose_name_plural='Villes ou Territoires'
 from .management_role import CustomUserManager
+
 class MyUser(AbstractBaseUser):
     username=models.CharField(max_length=50,unique=True,blank=True)
     password=models.CharField(max_length=50,blank=True)
     is_staff=models.BooleanField(default=False)
+    is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
     REQUIRED_FIELDS=['password']
     USERNAME_FIELD = 'username'
@@ -66,5 +68,4 @@ class Hopital(models.Model):
     class Meta:
         verbose_name='Hopital'
         verbose_name_plural='Hopitaux'
-        
-        
+ 
