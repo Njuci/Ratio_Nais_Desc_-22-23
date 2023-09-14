@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import PermissionsMixin,User
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 
 
 
@@ -29,14 +30,34 @@ class TerriVille(models.Model):
         verbose_name_plural='Villes ou Territoires'
 from .management_role import CustomUserManager
 
-class MyUser(AbstractBaseUser):
+class MyUser(AbstractUser):
     username=models.CharField(max_length=50,unique=True,blank=True)
     password=models.CharField(max_length=50,blank=True)
     is_staff=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
+
+    
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='myuser_set',
+        verbose_name='groups',
+        blank=True,
+        help_text='The groups this user belongs to.',
+        related_query_name='myuser'
+    )
+
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='myuser_set',
+        verbose_name='user permissions',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_query_name='myuser'
+    )
     REQUIRED_FIELDS=['password']
     USERNAME_FIELD = 'username'
+    
     objects=CustomUserManager()
     def has_perm(self,perms):
         return True
@@ -59,6 +80,7 @@ class Commune(models.Model):
         
 class Hopital(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    email=models.EmailField(unique=True,default="email@gmail.com")
     denom=models.CharField(max_length=70,blank=True)
     prov=models.ForeignKey(province,on_delete=models.PROTECT)
     TerriVi=models.ForeignKey(TerriVille,on_delete=models.PROTECT) 
@@ -69,3 +91,6 @@ class Hopital(models.Model):
         verbose_name='Hopital'
         verbose_name_plural='Hopitaux'
  
+class CertificatNaissance(models.Model):
+    hospital_id=models.ForeignKey(Hopital,on_delete=models.PROTECT)
+    
