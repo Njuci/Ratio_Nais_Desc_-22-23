@@ -104,15 +104,24 @@ class CertificatNaissance(models.Model):
     date_deliv_cert=models.DateField(auto_now=True)
     nom_complet_pere=models.CharField(max_length=120,blank=True)
     profession_pere=models.CharField(max_length=20,blank=True)
+    date_nais_pere=models.DateField()
+    lieu_nais_pere=models.CharField(max_length=20,blank=True)
     nom_complet_mere=models.CharField(max_length=120,blank=True)
     profession_mere=models.CharField(max_length=20,blank=True)
+    date_nais_mere=models.DateField()
+    lieu_nais_mere=models.CharField(max_length=20,blank=True)
     localite_parent=models.CharField(max_length=20,blank=True)
     collectiv_parent=models.CharField(max_length=20,blank=True)
     def __str__(self) -> str:
-        return 'cert'+self.id
+        return f'cert{self.hospital_id}'+self.id
     class Meta:
         verbose_name='Certificat de Naissance'
         verbose_name_plural='Certificats de Naissance'
+        
+        
+class ActeNaiss(models.Model):
+    certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)
+    
     
     
 
