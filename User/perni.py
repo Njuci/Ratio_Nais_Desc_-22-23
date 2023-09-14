@@ -6,9 +6,8 @@ from django.contrib.auth.models import Permission
 
 commune_permissions = Permission.objects.filter(codename__in=['add_actenaiss', 'change_actenaiss','delete_actenaiss','view_actenaiss'])
 
-add_acte_permission =commune_permissions
-commune_group.permissions.add(*add_acte_permission)
+add_acte_permission = Permission.objects.get(codename='add_actedenaissance')
+commune_group.permissions.add(add_acte_permission)
 
-hospital_permissions=Permission.objects.filter(codename_in=['add_certificatnaissance','view_certificatnaissance',
-                                                           'change_certificatnaissance','delete_certificatnaissance'])
+hospital_permissions=Permission.objects.filter(codename_in=['add_certificatnaissance','view_certificatnaissance',  'change_certificatnaissance','delete_certificatnaissance'])
 hopital_group.permissions.add(*hospital_permissions)
