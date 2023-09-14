@@ -1,6 +1,6 @@
 from .models import Commune,MyUser
 from django.contrib.auth.models import Group, Permission
-"""
+
 # Créer un groupe pour les commune
 commune_group, created = Group.objects.get_or_create(name='CommuneGroup')
 #créer un groupe pour les hopitals
@@ -14,14 +14,14 @@ admin_group, created = Group.objects.get_or_create(name='Administrateur')
 commune_permissions = Permission.objects.filter(codename__in=['can_view_profile', 'can_edit_profile'])
 commune_group.permissions.add(*commune_permissions)
 # Autorisations pour les hopitaux
-hospital_permissions = Permission.objects.filter(codename__in=['can_view_profile', 'can_edit_profile'])
+hospital_permissions = Permission.objects.filter(codename__in=['can_edit_profile'])
 hospital_group.permissions.add(*hospital_permissions)
 
 
 # Autorisations pour les administrateurs
-admin_permissions = Permission.objects.filter(codename__in=['can_manage_users', 'can_edit_settings'])
+admin_permissions = Permission.objects.filter(codename__in=['view_user', 'add_user'])
 admin_group.permissions.add(*admin_permissions)
-
+"""
 
 
 from django.contrib.auth.models import User
