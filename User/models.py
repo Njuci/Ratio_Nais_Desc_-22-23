@@ -1,7 +1,4 @@
 from django.db import models
-import uuid
-
-from django.db import models
 from django.contrib.auth.models import PermissionsMixin,User
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils import timezone
@@ -29,36 +26,21 @@ class TerriVille(models.Model):
         verbose_name='Ville ou Territoire'
         verbose_name_plural='Villes ou Territoires'
 from .management_role import CustomUserManager
-
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group,Permission
 class MyUser(AbstractUser):
-    username=models.CharField(max_length=50,unique=True,blank=True)
-    password=models.CharField(max_length=50,blank=True)
-    is_staff=models.BooleanField(default=False)
-    is_active=models.BooleanField(default=True)
-    is_superuser=models.BooleanField(default=False)
-
-    
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='myuser_set',
-        verbose_name='groups',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        related_query_name='myuser'
-    )
-
+    USER_TYPE_CHOICES = (
+           ('admin', 'Admin'),
+           ('commune', 'Commune'),
+           ('hopital', 'Hopital'),
+       )
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
+    groups = models.ManyToManyField(Group, related_name='myuser_set', blank=True)
     user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='myuser_set',
-        verbose_name='user permissions',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_query_name='myuser'
+        Permission, related_name='myuser_set', blank=True
     )
-    REQUIRED_FIELDS=['password']
-    USERNAME_FIELD = 'username'
+    objects=get_user_model()
     
-    objects=CustomUserManager()
     def has_perm(self,perms):
         return True
     def has_module_perms(self,app_label):
@@ -106,10 +88,12 @@ class CertificatNaissance(models.Model):
     profession_pere=models.CharField(max_length=20,blank=True)
     date_nais_pere=models.DateField()
     lieu_nais_pere=models.CharField(max_length=20,blank=True)
+    nationalite_pere=models.CharField(max_length=20,blank=True)    
     nom_complet_mere=models.CharField(max_length=120,blank=True)
     profession_mere=models.CharField(max_length=20,blank=True)
     date_nais_mere=models.DateField()
     lieu_nais_mere=models.CharField(max_length=20,blank=True)
+    nationalite_mere=models.CharField(max_length=20)
     localite_parent=models.CharField(max_length=20,blank=True)
     collectiv_parent=models.CharField(max_length=20,blank=True)
     def __str__(self) -> str:
@@ -121,8 +105,14 @@ class CertificatNaissance(models.Model):
         
 class ActeNaiss(models.Model):
     certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)
-    
-    
+    numeros_volume=models.CharField(max_length=5,blank=True)
+    numeros_folio=models.CharField(max_length=5,blank=True,null=True)
+    nom_declarant=models.CharField(max_length=120)
+    qualie_declarant=models.CharField(max_length=20,blank=True)
+    profession_declarant=models.CharField(max_length=20)
+    date_enregitrement=models.DateField(auto_now_add=True)
+    commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
+    langue_redaction=models.CharField(max_length=20,blank=True)
     
 
     
