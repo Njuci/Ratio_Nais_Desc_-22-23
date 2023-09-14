@@ -81,6 +81,7 @@ class Commune(models.Model):
 class Hopital(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     email=models.EmailField(unique=True,default="email@gmail.com")
+    boite_postal=models.CharField(max_length=9,blank=True)
     denom=models.CharField(max_length=70,blank=True)
     prov=models.ForeignKey(province,on_delete=models.PROTECT)
     TerriVi=models.ForeignKey(TerriVille,on_delete=models.PROTECT) 
@@ -91,6 +92,28 @@ class Hopital(models.Model):
         verbose_name='Hopital'
         verbose_name_plural='Hopitaux'
  
-class CertificatNaissance(models.Model):
+class CertificatNaissance(models.Model):    
     hospital_id=models.ForeignKey(Hopital,on_delete=models.PROTECT)
+    nom_medecin=models.CharField(max_length=40,blank=True)
+    nom_enfant=models.CharField(max_length=40,blank=True)
+    post_nom_enfant=models.CharField(max_length=40,blank=True)
+    prenom_enfant=models.CharField(max_length=40,blank=True)
+    sexe_enfant=models.CharField(max_length=1,blank=True)
+    poid_enfant=models.FloatField(default=0.00)
+    date_nais_enfant=models.DateField(auto_now_add=True)
+    date_deliv_cert=models.DateField(auto_now=True)
+    nom_complet_pere=models.CharField(max_length=120,blank=True)
+    profession_pere=models.CharField(max_length=20,blank=True)
+    nom_complet_mere=models.CharField(max_length=120,blank=True)
+    profession_mere=models.CharField(max_length=20,blank=True)
+    localite_parent=models.CharField(max_length=20,blank=True)
+    collectiv_parent=models.CharField(max_length=20,blank=True)
+    def __str__(self) -> str:
+        return 'cert'+self.id
+    class Meta:
+        verbose_name='Certificat de Naissance'
+        verbose_name_plural='Certificats de Naissance'
+    
+    
+
     
