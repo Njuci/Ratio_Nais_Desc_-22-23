@@ -25,7 +25,6 @@ class TerriVille(models.Model):
     class Meta:
         verbose_name='Ville ou Territoire'
         verbose_name_plural='Villes ou Territoires'
-from .management_role import CustomUserManager
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group,Permission
 class MyUser(AbstractUser):
