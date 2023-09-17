@@ -34,11 +34,12 @@ class MyUser(AbstractUser):
            ('hopital', 'Hopital'),
        )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
+    USERNAME_FIELD='username'
     groups = models.ManyToManyField(Group, related_name='myuser_set', blank=True)
     user_permissions = models.ManyToManyField(
         Permission, related_name='myuser_set', blank=True
     )
-    objects=get_user_model()
+    
     
     def has_perm(self,perms):
         return True
