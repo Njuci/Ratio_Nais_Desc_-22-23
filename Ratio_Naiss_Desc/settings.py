@@ -75,7 +75,7 @@ WSGI_APPLICATION = 'Ratio_Naiss_Desc.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc',
+        'NAME': 'ratio_nais_desc2',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',

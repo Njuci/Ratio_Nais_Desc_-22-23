@@ -50,3 +50,4 @@ class CreateVilleTerr(APIView):
         vte=TerriVille.objects.all().order_by('denom')
         serial=TerrVilleSerial(vte ,many=True)
         return Response(serial.data,status=status.HTTP_200_OK)
+    

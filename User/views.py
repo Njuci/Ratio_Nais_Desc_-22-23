@@ -50,6 +50,7 @@ class UserCreateView(APIView):
 class CreateCommune(APIView):
      def post(self,request):
          #je prend d'abord les parametre de 
+         
          userse={}
          username = request.data.get('username')
          password=request.data.get('password')
@@ -58,6 +59,8 @@ class CreateCommune(APIView):
          userse['password']=password
          userse['user_type']=request.data.get('user_type')
          userserial=UtilisateurSerial(data=userse)
+         nombre_user=MyUser.objects.count()
+         print(nombre_user)
          t=userserial.is_valid()
          if t:
              userserial.save()
@@ -65,7 +68,7 @@ class CreateCommune(APIView):
              user_id=user.id 
              print(user_id)
                 
-         return Response({'user':username})
+         return Response({'user':nombre_user})
 
         
 
