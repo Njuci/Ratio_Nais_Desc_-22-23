@@ -49,17 +49,26 @@ class UserCreateView(APIView):
 
 class CreateCommune(APIView):
      def post(self,request):
+         from django.conf import settings
+         import jwt
+         token=request.data.get('token') 
+         print(token)
+         scret=settings.SECRET_KEY
+         decode=jwt.decode(token,scret,algorithms=['HS256'])
+         
          #je prend d'abord les parametre de 
+         
          nombre_user=MyUser.objects.count()
-         print(request.data)
-         user_admin_request=request.data.get('user_admin')
-         print(user_admin_request)
-         user_name_admin=user_admin_request.get('username')
-         print(str(user_name_admin))
-         user_name_admin=str(user_name_admin)
-         user_admin_verifier= MyUser.objects.get(username=user_name_admin)
+         
+         
+        #  user_admin_request=request.data.get('user_admin')
+        #  print(user_admin_request)
+        #  user_name_admin=user_admin_request.get('username')
+        #  print(str(user_name_admin))
+        #  user_name_admin=str(user_name_admin)
+        #  user_admin_verifier= MyUser.objects.get(username=user_name_admin)
                
-         return Response({'user':nombre_user,'admin':user_admin_verifier.username})
+         return Response({'user':nombre_user,'admin':decode.keys()})
 
         
 

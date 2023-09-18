@@ -153,6 +153,8 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SIGNING_KEY': SECRET_KEY,
+    
 }
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
