@@ -7,8 +7,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .serializer import *
+from datetime import datetime
 from django.contrib.auth import authenticate
-
+from django.conf import settings
+import jwt
 class LoginView(APIView):
     def post(self, request):
         print(request.data)
@@ -34,7 +36,7 @@ class LoginView(APIView):
 
 class UserCreateView(APIView):
     #permission_classes = [IsAuthenticated]  # Assurez-vous que seul un utilisateur authentifié peut accéder à cette vue
-    print(ModelSerializer)  
+     
     def post(self, request):
         serializer = UtilisateurSerial(data=request.data)
         
@@ -46,16 +48,32 @@ class UserCreateView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+def is_access_token_valid(access_token, secret_key):
+    try:
+        decoded_token = jwt.decode(access_token, secret_key, algorithms=['HS256'])
+        expiration_time = datetime.fromtimestamp(decoded_token['exp'])
+        current_time = datetime.now()
+
+        if current_time < expiration_time:
+            return True
+        else:
+            return False
+    except jwt.ExpiredSignatureError:
+        return False
 
 class CreateCommune(APIView):
      def post(self,request):
-         from django.conf import settings
-         import jwt
-         token=request.data.get('token') 
-         print(token)
          scret=settings.SECRET_KEY
-         decode=jwt.decode(token,scret,algorithms=['HS256'])
          
+         token=request.data.get('token') 
+         if is_access_token_valid(token,scret):
+             print(token)
+             
+             decode=jwt.decode(token,scret,algorithms=['HS256'])
+             for i in decode.keys():
+                  f=decode[i]
+                  print(f)
+                
          #je prend d'abord les parametre de 
          
          nombre_user=MyUser.objects.count()
