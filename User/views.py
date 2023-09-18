@@ -53,9 +53,13 @@ class CreateCommune(APIView):
          nombre_user=MyUser.objects.count()
          print(request.data)
          user_admin_request=request.data.get('user_admin')
-         user_admin_verifier=MyUser.objects.get(username=user_admin_request.username)
+         print(user_admin_request)
+         user_name_admin=user_admin_request.get('username')
+         print(str(user_name_admin))
+         user_name_admin=str(user_name_admin)
+         user_admin_verifier= MyUser.objects.get(username=user_name_admin)
                
-         return Response({'user':nombre_user,'admin':user_admin_verifier})
+         return Response({'user':nombre_user,'admin':user_admin_verifier.username})
 
         
 
