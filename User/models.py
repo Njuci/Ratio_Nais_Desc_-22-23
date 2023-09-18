@@ -53,7 +53,7 @@ class Commune(models.Model):
     denom=models.CharField(max_length=70,blank=True)
     prov=models.ForeignKey(province,on_delete=models.PROTECT)
     TerriVi=models.ForeignKey(TerriVille,on_delete=models.PROTECT) 
-    nom_bour=models.CharField(max_length=9)   
+    nom_bour=models.CharField(max_length=50)   
     def __str__(self) -> str:
         return self.denom
     class Meta:

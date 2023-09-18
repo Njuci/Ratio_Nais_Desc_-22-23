@@ -55,28 +55,91 @@ def is_access_token_valid(access_token, secret_key):
         current_time = datetime.now()
 
         if current_time < expiration_time:
-            return True
+            return True, decoded_token
         else:
-            return False
+            decoded_token=None
+            return False,decoded_token
     except jwt.ExpiredSignatureError:
         return False
-
+def is_user_authorized(user_type,user_type_verifie):
+    if user_type==user_type_verifie:
+        return True
+    else:
+        return False
+def chek_user(username):
+    try:
+        user= MyUser.objects.get(username=username)
+    except MyUser.DoesNotExist:
+        user=None
+    print(user)
+    if user is not None:
+        return False
+    else:
+        return True
+    
 class CreateCommune(APIView):
      def post(self,request):
          scret=settings.SECRET_KEY
          
          token=request.data.get('token') 
-         if is_access_token_valid(token,scret):
-             print(token)
+         user_commune_create=request.data.get('new_user_commune')
+         print(user_commune_create)
+         print(token)
+         if is_access_token_valid(token,scret): #dwtte fonction verifie l'access_token de l'utilisateur          
              
              decode=jwt.decode(token,scret,algorithms=['HS256'])
-             for i in decode.keys():
-                  f=decode[i]
-                  print(f)
+             
+             
+             user_admin_name=MyUser.objects.get(username=decode['username'])
+             print(user_admin_name.user_type)
+             user_type_ver="admin"
+             print(user_admin_name.user_type)
+             
+             print("papa")
+             #print(is_user_authorized(user_type=str(user_admin_name.user_type),user_type_verifie=user_type_ver))
+             if (user_admin_name.user_type==user_type_ver):  #on verifie s'il est admin 
+                 print("papa")
+                 
+                 
+                 print(user_commune_create.keys())
+                 new_user_name=user_commune_create['username']
+                 print(type(new_user_name))
+                 g=chek_user(username=new_user_name)
+                 if (g is not None): #on verifie si l'utilisateur n'existe pas réellement
+                     user_commune_create['user_type']='commune'
+                     user_commune=UtilisateurSerial(data=user_commune_create)
+                     if user_commune.is_valid(): 
+                         user_commune.save()
+                         new_user=MyUser.objects.get(username=user_commune_create['username'])
+                         new_user_id=new_user.id 
+                         info_commune=request.data['info_commune']
+                         info_commune['user']=new_user_id
+                         new_commune=CommuneSerial(data=info_commune)
+                         if new_commune.is_valid():
+                             new_commune.save()
+                             message={"message":"commune et user ajoutes"}
+                             return Response(message,status=status.HTTP_201_CREATED)
+                         else:
+                             erreur=new_commune.errors
+                             
+                             
+                             message={"message":"infos communes incorrectes et user supprimé","erreur":erreur}
+                             return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                     
+                 else:
+                     message={"message":"utilisateur non autorisé, il se pourrait qu'il  soit deja creer"}
+                     return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+             else:
+                 message={}
+                 return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+                             
+         message={"token":"invalide access_token veuillez vous authentifiez"}
+         return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+            
                 
-         #je prend d'abord les parametre de 
+        #  #je prend d'abord les parametre de 
          
-         nombre_user=MyUser.objects.count()
+        #  nombre_user=MyUser.objects.count()
          
          
         #  user_admin_request=request.data.get('user_admin')
@@ -86,9 +149,52 @@ class CreateCommune(APIView):
         #  user_name_admin=str(user_name_admin)
         #  user_admin_verifier= MyUser.objects.get(username=user_name_admin)
                
-         return Response({'user':nombre_user,'admin':decode.keys()})
-
-        
-
-
+         
 # Create your views here.
+class CreateCommune2(APIView):
+     def post(self,request):
+         valid_type_user="admin"
+         secret_key=settings.SECRET_KEY
+         token=request.data['token']
+         new_user_commune=request.data['new_user_commune']
+         info_commune=request.data['info_commune']
+         valid_token=is_access_token_valid(token,secret_key)
+         if valid_token[0]:
+             request_user=valid_token[1]['username']
+             user_request=MyUser.objects.get(username=request_user)
+             if is_user_authorized(user_request.user_type,valid_type_user):
+                 new_user_name=new_user_commune['username']
+                 user_verif=chek_user(username=new_user_name)
+                 if user_verif:
+                     new_user_commune['user_type']='commune'
+                     serial_user=UtilisateurSerial(data=new_user_commune)
+                     if serial_user.is_valid():
+                         serial_user.save()
+                         info_commune['user'] = serial_user.data['id']
+                         serial_commune=CommuneSerial(data=info_commune)
+                         if serial_commune.is_valid():
+                             serial_commune.save()
+                             Communedenom=serial_commune.data['denom']
+                             message={"message":"la commune"+f'{Communedenom}'+" a été créee"}
+                             return Response(message,status=status.HTTP_201_CREATED)
+                         else:
+                             erreur=serial_commune.errors
+                             user=MyUser.objects.get(username=serial_user.data['username'])
+                             user.delete()
+                             message={"message":"les infos sont mal donnee","erreur":erreur}
+                             return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                         
+                         
+                     else:
+                         message={"message":"informations invalide","errreur":serial_user.errors}
+                         return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                 
+                 return Response({"message":"l' utilisateur commune existe deja"},status=status.HTTP_400_BAD_REQUEST)
+                
+             else:
+                 message={"message":"ce type des users n'est pas autorisé à faire cette action"}            
+                 return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+         
+         
+         message={"token":"invalide access_token veuillez vous authentifiez"}
+         return Response(message,status=status.HTTP_401_UNAUTHORIZED)

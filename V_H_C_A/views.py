@@ -17,7 +17,9 @@ class CreateProvince(APIView):
         if serial.is_valid():
             serial.save()
             message={'message':'province créée avec succès'}
-            return Response(message,status=status.HTTP_201_CREATED)
+            prov=province.objects.all().order_by('denom')
+            serial=ProvinceSerial(prov,many=True)
+            return Response(serial.data,status=status.HTTP_201_CREATED)
         prov=request.data.get('denom')
         provt=province.objects.get(denom=prov)
         if provt is not None:
@@ -38,7 +40,9 @@ class CreateVilleTerr(APIView):
         if serial.is_valid():
             serial.save()
             message={'message':'La ville ou le territoire créé avec succès'}
-            return Response(message,status=status.HTTP_201_CREATED)
+            vte=TerriVille.objects.all().order_by('denom')
+            serial=TerrVilleSerial(vte ,many=True)
+            return Response(serial.data,status=status.HTTP_201_CREATED)
         Vit=request.data.get('denom')
         vt=province.objects.get(denom=Vit)
         if vt is not None:
