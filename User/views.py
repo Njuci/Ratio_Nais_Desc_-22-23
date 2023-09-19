@@ -11,42 +11,6 @@ from datetime import datetime
 from django.contrib.auth import authenticate
 from django.conf import settings
 import jwt
-class LoginView(APIView):
-    def post(self, request):
-        print(request.data)
-        # Obtenir les données d'identification de la requête
-        username = request.data.get('username')
-        password = request.data.get('password')
-
-        # Effectuer les vérifications d'identification, par exemple avec authenticate() de Django
-        user = MyUser.objects.get(username=username)
-        authe=authenticate(username=user.username,password=user.password)
-        print(user,authe)    
-        if user is not None and password ==user.password:
-            # Authentification réussie
-            
-            # Générer un jeton d'authentification pour l'utilisateur si nécessaire
-            token = RefreshToken.for_user(user)
-
-            return Response({'refreshToken':str(token),
-                             "acccess":str(token.access_token)}, status=status.HTTP_200_OK)
-        else:
-            # Authentification échouée
-            return Response({'message': 'Identifiants invalides'}, status=status.HTTP_401_UNAUTHORIZED)
-
-class UserCreateView(APIView):
-    #permission_classes = [IsAuthenticated]  # Assurez-vous que seul un utilisateur authentifié peut accéder à cette vue
-     
-    def post(self, request):
-        serializer = UtilisateurSerial(data=request.data)
-        
-        if serializer.is_valid():
-            user=MyUser.objects.create()
-            user = serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 def is_access_token_valid(access_token, secret_key):
     try:
@@ -61,11 +25,8 @@ def is_access_token_valid(access_token, secret_key):
             return False,decoded_token
     except jwt.ExpiredSignatureError:
         return False
-def is_user_authorized(user_type,user_type_verifie):
-    if user_type==user_type_verifie:
-        return True
-    else:
-        return False
+
+
 def chek_user(username):
     try:
         user= MyUser.objects.get(username=username)
@@ -77,6 +38,52 @@ def chek_user(username):
     else:
         return True
     
+class LoginView(APIView):
+    def post(self, request):
+        print(request.data)
+        # Obtenir les données d'identification de la requête
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        # Effectuer les vérifications d'identification, par exemple avec authenticate() de Django
+        if not chek_user(username=username):
+            user = MyUser.objects.get(username=username)
+            #authe=authenticate(username=user.username,password=user.password)
+            #print(user,authe)    
+            if user is not None and password ==user.password:
+                # Authentification réussie
+                
+                # Générer un jeton d'authentification pour l'utilisateur si nécessaire
+                token = RefreshToken.for_user(user)
+                print(type(token))
+                
+                
+
+                return Response({'refreshToken':str(token),
+                                 "user_type":user.user_type,
+                                "access":str(token.access_token)}, status=status.HTTP_200_OK)
+            else:
+                # Authentification échouée
+                return Response({'message': 'Identifiants invalides'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({"message":"user not found"},status=status.HTTP_401_UNAUTHORIZED)
+class UserCreateView(APIView):#permission_classes = [IsAuthenticated]  # Assurez-vous que seul un utilisateur authentifié peut accéder à cette vue
+     
+    def post(self, request):
+        serializer = UtilisateurSerial(data=request.data)
+        
+        if serializer.is_valid():
+            user=MyUser.objects.create()
+            user = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def is_user_authorized(user_type,user_type_verifie):
+    if user_type==user_type_verifie:
+        return True
+    else:
+        return False
 class CreateCommune(APIView):
      def post(self,request):
          valid_type_user="admin"
@@ -86,8 +93,9 @@ class CreateCommune(APIView):
          info_commune=request.data['info_commune']
          valid_token=is_access_token_valid(token,secret_key)
          if valid_token[0]:
-             request_user=valid_token[1]['username']
-             user_request=MyUser.objects.get(username=request_user)
+             print(valid_token[1])
+             request_user=valid_token[1]['user_id']
+             user_request=MyUser.objects.get(id=request_user)
              if is_user_authorized(user_request.user_type,valid_type_user):
                  new_user_name=new_user_commune['username']
                  user_verif=chek_user(username=new_user_name)
@@ -105,6 +113,57 @@ class CreateCommune(APIView):
                              return Response(message,status=status.HTTP_201_CREATED)
                          else:
                              erreur=serial_commune.errors
+                             user=MyUser.objects.get(username=serial_user.data['username'])
+                             user.delete()
+                             message={"message":"les infos sont mal donnee","erreur":erreur}
+                             return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                         
+                         
+                     else:
+                         message={"message":"informations invalide","errreur":serial_user.errors}
+                         return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                 
+                 return Response({"message":"l' utilisateur commune existe deja"},status=status.HTTP_400_BAD_REQUEST)
+                
+             else:
+                 message={"message":"ce type des users n'est pas autorisé à faire cette action"}            
+                 return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+         
+         
+         message={"token":"invalide access_token veuillez vous authentifiez"}
+         return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+     
+     
+
+
+class CreateHospital(APIView):
+     def post(self,request):
+         valid_type_user="admin"
+         secret_key=settings.SECRET_KEY
+         token=request.data['token']
+         new_user_hopital=request.data['new_user_hopital']
+         info_hopital=request.data['info_hopital']
+         valid_token=is_access_token_valid(token,secret_key)
+         if valid_token[0]:
+             request_user=valid_token[1]['user_id']
+             user_request=MyUser.objects.get(id=request_user)
+             if is_user_authorized(user_request.user_type,valid_type_user):
+                 new_user_name=new_user_hopital['username']
+                 user_verif=chek_user(username=new_user_name)
+                 if user_verif:
+                     new_user_hopital['user_type']='commune'
+                     serial_user=UtilisateurSerial(data=new_user_hopital)
+                     if serial_user.is_valid():
+                         serial_user.save()
+                         info_hopital['user'] = serial_user.data['id']
+                         serial_hopital=Hopitalserial(data=info_hopital)
+                         if serial_hopital.is_valid():
+                             serial_hopital.save()
+                             Communedenom=serial_hopital.data['denom']
+                             message={"message":"l'hopital "+f'{Communedenom}'+" a été créee"}
+                             return Response(message,status=status.HTTP_201_CREATED)
+                         else:
+                             erreur=serial_hopital.errors
                              user=MyUser.objects.get(username=serial_user.data['username'])
                              user.delete()
                              message={"message":"les infos sont mal donnee","erreur":erreur}
