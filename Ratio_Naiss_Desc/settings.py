@@ -72,6 +72,20 @@ WSGI_APPLICATION = 'Ratio_Naiss_Desc.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ratio_nais_desc',
+        'USER': 'njucimec',
+        'PASSWORD': '3670njci',
+        'HOST': 'db4free.net',
+        'PORT': '3306',
+    }
+}
+
+
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -82,8 +96,6 @@ DATABASES = {
         'PORT': '3306'
     }
 }
-
-'''
 import requests
 DATABASES = {
     'default': {
