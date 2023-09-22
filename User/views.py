@@ -68,8 +68,7 @@ class UserCreateView(APIView):
         serializer = UtilisateurSerial(data=request.data)
         
         if serializer.is_valid():
-            user=MyUser.objects.create()
-            user = serializer.save()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -147,7 +146,7 @@ class CreateHospital(APIView):
                  new_user_name=new_user_hopital['username']
                  user_verif=chek_user(username=new_user_name)
                  if user_verif:
-                     new_user_hopital['user_type']='commune'
+                     new_user_hopital['user_type']='hopital'
                      serial_user=UtilisateurSerial(data=new_user_hopital)
                      if serial_user.is_valid():
                          serial_user.save()
@@ -155,8 +154,8 @@ class CreateHospital(APIView):
                          serial_hopital=Hopitalserial(data=info_hopital)
                          if serial_hopital.is_valid():
                              serial_hopital.save()
-                             Communedenom=serial_hopital.data['denom']
-                             message={"message":"l'hopital "+f'{Communedenom}'+" a été créee"}
+                             hospitaldenom=serial_hopital.data['denom']
+                             message={"message":"l'hopital "+f'{hospitaldenom}'+" a été créee"}
                              return Response(message,status=status.HTTP_201_CREATED)
                          else:
                              erreur=serial_hopital.errors
