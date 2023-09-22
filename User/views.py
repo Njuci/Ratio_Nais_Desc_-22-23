@@ -40,27 +40,24 @@ def chek_user(username):
     
 class LoginView(APIView):
     def post(self, request):
-        print(request.data)
+        
         # Obtenir les données d'identification de la requête
         username = request.data.get('username')
         password = request.data.get('password')
-
+        
         # Effectuer les vérifications d'identification, par exemple avec authenticate() de Django
         if not chek_user(username=username):
             user = MyUser.objects.get(username=username)
             #authe=authenticate(username=user.username,password=user.password)
             #print(user,authe)    
-            if user is not None and password ==user.password:
-                # Authentification réussie
+            if user is not None and password ==user.password:              # Authentification réussie
                 
                 # Générer un jeton d'authentification pour l'utilisateur si nécessaire
                 token = RefreshToken.for_user(user)
-                print(type(token))
-                
+                               
                 
 
-                return Response({'refreshToken':str(token),
-                                 "user_type":user.user_type,
+                return Response({"user_type":user.user_type,
                                 "access":str(token.access_token)}, status=status.HTTP_200_OK)
             else:
                 # Authentification échouée
