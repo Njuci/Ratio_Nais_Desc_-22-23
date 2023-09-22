@@ -66,8 +66,7 @@ class LoginView(APIView):
                 # Authentification échouée
                 return Response({'message': 'Identifiants invalides'}, status=status.HTTP_401_UNAUTHORIZED)
         return Response({"message":"user not found"},status=status.HTTP_401_UNAUTHORIZED)
-class UserCreateView(APIView):#permission_classes = [IsAuthenticated]  # Assurez-vous que seul un utilisateur authentifié peut accéder à cette vue
-     
+class UserCreateView(APIView):     
     def post(self, request):
         serializer = UtilisateurSerial(data=request.data)
         
