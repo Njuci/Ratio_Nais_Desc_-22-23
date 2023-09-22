@@ -72,12 +72,25 @@ import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'WWQaQt3ZWBd5Cbimz6Vr',
+        'HOST': 'containers-us-west-196.railway.app',
+        'PORT': '5693',
+    }
+}
+
+
+'''
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc',
-        'USER': 'njucimec',
+        'NAME': 'railway',
+        'USER': '',
         'PASSWORD': '3670njci',
         'HOST': 'db4free.net',
         'PORT': '3306',
@@ -88,7 +101,6 @@ DATABASES['default']['OPTIONS']['charset'] = 'utf8mb4'
 del DATABASES['default']['OPTIONS']['sslmode'] 
 DATABASES['default']['OPTIONS']['ssl'] =  {'ca': os.environ.get('MYSQL_ATTR_SSL_CA')}
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
