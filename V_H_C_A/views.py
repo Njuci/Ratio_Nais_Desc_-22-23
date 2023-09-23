@@ -58,6 +58,7 @@ class Create_certificat(APIView):
         user_type_authorized='hopital'
         if verification_token[0]:
             
+            
             pass
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
