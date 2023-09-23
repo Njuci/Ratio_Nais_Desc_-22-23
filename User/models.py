@@ -16,6 +16,7 @@ class province(models.Model):
     class Meta:
         verbose_name='Province'
         verbose_name_plural='Provinces'
+        
 class TerriVille(models.Model):
     denom=models.CharField(max_length=70,unique=True)
     prov=models.ForeignKey(province,on_delete=models.PROTECT)
@@ -107,7 +108,7 @@ class CertificatNaissance(models.Model):
     class Meta:
         verbose_name='Certificat de Naissance'
         verbose_name_plural='Certificats de Naissance'
-        
+        unique_together=(('nom_enfant','post_nom_enfant','prenom_enfant'),) #en sql cette instruction correspond à la notion des clés composites
         
 class ActeNaiss(models.Model):
     certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)
