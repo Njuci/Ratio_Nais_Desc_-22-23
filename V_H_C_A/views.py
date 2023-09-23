@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from User.models import province, TerriVille
@@ -52,10 +53,11 @@ class CreateVilleTerr(APIView):
         serial=TerrVilleSerial(vte ,many=True)
         return Response(serial.data,status=status.HTTP_200_OK)
     
-class Create_certificat(APIView):
+class Create_certificatNais(APIView):
     def post(self,request):
         token=request.data.get('token')
-        verification_token=is_access_token_valid(token)
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
         cert=request.data.get("new_certinaiss")
         user_type_authorized='hopital'
         if verification_token[0]:
@@ -66,7 +68,7 @@ class Create_certificat(APIView):
                 CertSerial=CertiNaissSerial(data=cert)
                 if CertSerial.is_valid():
                     CertSerial.save()
-                    cert=CertSerial.data['get_nom']
+                    cert=CertSerial.data['id']
                     return Response({"message":"Certificat"+ f"{cert}"+" a été enregistré avec succès","data":CertSerial.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":CertSerial.errors}
@@ -79,3 +81,9 @@ class Create_certificat(APIView):
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
         
         
+    def get(self,request):
+        cert=CertificatNaissance.objects.all().order_by('id')
+        serial=CertiNaissSerial(cert,many=True)
+        
+        
+        return Response(serial.data,status=status.HTTP_200_OK)

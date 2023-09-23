@@ -81,8 +81,8 @@ class CertificatNaissance(models.Model):
     nom_enfant=models.CharField(max_length=40,blank=True)
     post_nom_enfant=models.CharField(max_length=40,blank=True)
     prenom_enfant=models.CharField(max_length=40,blank=True)
-    sexe_enfant=models.CharField(max_length=1,blank=True,choices=sex_choice)
-    poid_enfant=models.FloatField(default=0.00)
+    sexe_enfant=models.CharField(max_length=1,blank=True,choices=sex_choice,null=False)
+    poid_enfant=models.FloatField()
     date_nais_enfant=models.DateField(auto_now_add=True)
     date_deliv_cert=models.DateField(auto_now=True)
     nom_complet_pere=models.CharField(max_length=120,blank=True)
@@ -97,11 +97,13 @@ class CertificatNaissance(models.Model):
     nationalite_mere=models.CharField(max_length=20)
     localite_parent=models.CharField(max_length=20,blank=True)
     collectiv_parent=models.CharField(max_length=20,blank=True)
+    numero_cert=models.CharField(max_length=50)
     def __str__(self) -> str:
-        return f'cert{self.hospital_id}'+self.id
+        return f'cert{self.hospital_id}'+f'{self.id}'
     
-    def get_nom(self) -> str:
-        return f'cert{self.hospital_id}'+self.id
+    def get_nom(self):
+        self.numero_cert=f'cert{self.hospital_id}'+f'{self.id}'
+        return self.numero_cert
     class Meta:
         verbose_name='Certificat de Naissance'
         verbose_name_plural='Certificats de Naissance'
