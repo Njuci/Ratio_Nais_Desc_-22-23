@@ -4,6 +4,7 @@ from User.models import province, TerriVille
 from rest_framework.response import Response
 from rest_framework import status
 from User.serializer import *
+from User.models import *
 from django.contrib.auth import authenticate
 from User.views import chek_user,is_access_token_valid,is_user_authorized
 class CreateProvince(APIView):
@@ -55,14 +56,26 @@ class Create_certificat(APIView):
     def post(self,request):
         token=request.data.get('token')
         verification_token=is_access_token_valid(token)
+        cert=request.data.get("new_certinaiss")
         user_type_authorized='hopital'
         if verification_token[0]:
-            
-            
-            pass
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                hopital=Hopital.objects.get(user=user.id)
+                cert['hospital_id']=hopital.id
+                CertSerial=CertiNaissSerial(data=cert)
+                if CertSerial.is_valid():
+                    CertSerial.save()
+                    cert=CertSerial.data['get_nom']
+                    return Response({"message":"Certificat"+ f"{cert}"+" a été enregistré avec succès","data":CertSerial.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":CertSerial.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+                                    
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
         
         
-        return 0
-           

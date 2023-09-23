@@ -75,12 +75,13 @@ class Hopital(models.Model):
         verbose_name_plural='Hopitaux'
  
 class CertificatNaissance(models.Model):    
+    sex_choice=(('m','Masculin'),('f','Feminin'))
     hospital_id=models.ForeignKey(Hopital,on_delete=models.PROTECT)
     nom_medecin=models.CharField(max_length=40,blank=True)
     nom_enfant=models.CharField(max_length=40,blank=True)
     post_nom_enfant=models.CharField(max_length=40,blank=True)
     prenom_enfant=models.CharField(max_length=40,blank=True)
-    sexe_enfant=models.CharField(max_length=1,blank=True)
+    sexe_enfant=models.CharField(max_length=1,blank=True,choices=sex_choice)
     poid_enfant=models.FloatField(default=0.00)
     date_nais_enfant=models.DateField(auto_now_add=True)
     date_deliv_cert=models.DateField(auto_now=True)
@@ -97,6 +98,9 @@ class CertificatNaissance(models.Model):
     localite_parent=models.CharField(max_length=20,blank=True)
     collectiv_parent=models.CharField(max_length=20,blank=True)
     def __str__(self) -> str:
+        return f'cert{self.hospital_id}'+self.id
+    
+    def get_nom(self) -> str:
         return f'cert{self.hospital_id}'+self.id
     class Meta:
         verbose_name='Certificat de Naissance'
