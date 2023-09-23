@@ -75,6 +75,7 @@ import dj_database_url
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+        'URL':'postgresql://postgres:WWQaQt3ZWBd5Cbimz6Vr@containers-us-west-196.railway.app:5693/railway',
         'NAME': 'railway',
         'USER': 'postgres',
         'PASSWORD': 'WWQaQt3ZWBd5Cbimz6Vr',
