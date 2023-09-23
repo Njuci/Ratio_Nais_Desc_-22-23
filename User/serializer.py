@@ -27,6 +27,8 @@ class CertiNaissSerial(ModelSerializer):
     class Meta:
         model= CertificatNaissance
         fields="__all__"
+        def get_nom(self,obj):
+            return obj.get_nom()
 class ProvinceSerial(ModelSerializer):
      class Meta:
          model=province
