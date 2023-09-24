@@ -98,7 +98,7 @@ class CertificatNaissance(models.Model):
     nationalite_mere=models.CharField(max_length=20)
     localite_parent=models.CharField(max_length=20,blank=True)
     collectiv_parent=models.CharField(max_length=20,blank=True)
-    numero_cert=models.CharField(max_length=50)
+   
     def __str__(self) -> str:
         return f'cert{self.hospital_id}'+f'{self.id}'
     
@@ -114,12 +114,16 @@ class ActeNaiss(models.Model):
     certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)
     numeros_volume=models.CharField(max_length=5,blank=True)
     numeros_folio=models.CharField(max_length=5,blank=True,null=True)
-    nom_declarant=models.CharField(max_length=120)
+    nom_declarant=models.CharField(max_length=120,blank=True)
     qualie_declarant=models.CharField(max_length=20,blank=True)
     profession_declarant=models.CharField(max_length=20)
     date_enregitrement=models.DateField(auto_now_add=True)
     commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
     langue_redaction=models.CharField(max_length=20,blank=True)
-    
+    class Meta:
+        verbose_name='Acte  de Naissance'
+        verbose_name_plural='Actes de Naissance'
+        
+        
 
     

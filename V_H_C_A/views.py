@@ -81,9 +81,11 @@ class Create_certificatNais(APIView):
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
         
         
-    def get(self,request):
-        cert=CertificatNaissance.objects.all().order_by('id')
-        serial=CertiNaissSerial(cert,many=True)
-        
-        
-        return Response(serial.data,status=status.HTTP_200_OK)
+
+    
+    class Get_Cert_per_commune(APIView):
+        def get(self,request):
+            cert=CertificatNaissance.objects.all().order_by('id')
+            serial=CertiNaissSerial(cert,many=True)
+               
+            return Response(serial.data,status=status.HTTP_200_OK)
