@@ -115,7 +115,7 @@ class ActeNaiss(models.Model):
     numeros_volume=models.CharField(max_length=5,blank=True)
     numeros_folio=models.CharField(max_length=5,blank=True,null=True)
     nom_declarant=models.CharField(max_length=120,blank=True)
-    qualie_declarant=models.CharField(max_length=20,blank=True)
+    qualite_declarant=models.CharField(max_length=20,blank=True)
     profession_declarant=models.CharField(max_length=20)
     date_enregitrement=models.DateField(auto_now_add=True)
     commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
