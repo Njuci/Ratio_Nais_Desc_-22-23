@@ -30,8 +30,16 @@ class CreateProvince(APIView):
         prov=province.objects.all().order_by('denom')
         serial=ProvinceSerial(prov,many=True)
         return Response(serial.data,status=status.HTTP_200_OK)
-    
-    
+class Get_Territoir_par_prov(APIView):
+    def post(self,request):
+        province_id=request.data.get('prov_id')
+        try:
+            Terr=TerriVille.objects.get(prov=province_id)
+            serial=TerrVilleSerial(Terr,many=True)
+        except TerriVille.DoesNotExist:
+            return Response({"message":"provice id invalid"},status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serial.data,status=status.HTTP_200_OK)
     
 class CreateVilleTerr(APIView):
     def post(self,request):

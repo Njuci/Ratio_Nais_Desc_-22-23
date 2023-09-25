@@ -82,6 +82,7 @@ def is_user_authorized(user_type,user_type_verifie):
 class CreateCommune(APIView):
      def post(self,request):
          valid_type_user="admin"
+         
          secret_key=settings.SECRET_KEY
          token=request.data['token']
          new_user_commune=request.data['new_user_commune']
