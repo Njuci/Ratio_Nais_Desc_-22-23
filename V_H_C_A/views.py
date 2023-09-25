@@ -10,8 +10,9 @@ from django.contrib.auth import authenticate
 from User.views import chek_user,is_access_token_valid,is_user_authorized
 class CreateProvince(APIView):
     def post(self,request):
+        print(request.data)
         serial=ProvinceSerial(data=request.data)
-        print(request.user)
+        print()
         if serial.is_valid():
             serial.save()
             message={'message':'province créée avec succès'}
@@ -126,7 +127,7 @@ class Get_CertN_par_hopital(APIView):
                 hptl=Hopital.objects.get(user=user.id)
             except Hopital.DoesNotExist:
                 hptl=None
-            if is_user_authorized(user.user_type,user_type_authorized):
+            if  is_user_authorized(user.user_type,user_type_authorized):
                 cert_par_hopital= CertificatNaissance.objects.filter(hospital_id=hptl.id).order_by('date_deliv_cert')
                 serial=CertiNaissSerial(cert_par_hopital,many=True)
                 return Response(serial.data,status=status.HTTP_200_OK)               
