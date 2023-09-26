@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from User.models import province, TerriVille
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework import status
 from User.serializer import *
 from User.models import *
@@ -30,16 +31,16 @@ class CreateProvince(APIView):
         prov=province.objects.all().order_by('denom')
         serial=ProvinceSerial(prov,many=True)
         return Response(serial.data,status=status.HTTP_200_OK)
-class Get_Territoir_par_prov(APIView):
-    def post(self,request):
-        province_id=request.data.get('prov_id')
-        try:
-            Terr=TerriVille.objects.get(prov=province_id)
-            serial=TerrVilleSerial(Terr,many=True)
-        except TerriVille.DoesNotExist:
-            return Response({"message":"provice id invalid"},status=status.HTTP_400_BAD_REQUEST)
+@api_view(["GET"])
+def Get_Territoir_par_prov(request,id):
+    province_id=id
+    try:
+        Terr=TerriVille.objects.filter(prov=province_id)
+        serial=TerrVilleSerial(Terr,many=True)
+    except TerriVille.DoesNotExist:
+        return Response({"message":"provice id invalid"},status=status.HTTP_400_BAD_REQUEST)
         
-        return Response(serial.data,status=status.HTTP_200_OK)
+    return Response(serial.data,status=status.HTTP_200_OK)
     
 class CreateVilleTerr(APIView):
     def post(self,request):

@@ -134,11 +134,12 @@ class CreateCommune(APIView):
 
 class CreateHospital(APIView):
      def post(self,request):
+         print(request.data)
          valid_type_user="admin"
          secret_key=settings.SECRET_KEY
          token=request.data['token']
-         new_user_hopital=request.data['new_user_hopital']
-         info_hopital=request.data['info_hopital']
+         new_user_hopital=request.data['new_user_hospital']
+         info_hopital=request.data['info_hospital']
          valid_token=is_access_token_valid(token,secret_key)
          if valid_token[0]:
              request_user=valid_token[1]['user_id']
@@ -170,7 +171,7 @@ class CreateHospital(APIView):
                          message={"message":"informations invalide","errreur":serial_user.errors}
                          return Response(message,status=status.HTTP_400_BAD_REQUEST)
                  
-                 return Response({"message":"l' utilisateur commune existe deja"},status=status.HTTP_400_BAD_REQUEST)
+                 return Response({"message":"l' utilisateur hosipal existe deja"},status=status.HTTP_400_BAD_REQUEST)
                 
              else:
                  message={"message":"ce type des users n'est pas autorisé à faire cette action"}            
