@@ -59,7 +59,8 @@ class Voir_stat(APIView):
     
 class Voir_stat_par_hop(APIView):
     # Utilisez la méthode "annotate" sur le modèle "CertificatNaissance" pour obtenir le nombre de certificats en fonction des dates et du sexe
-    def get(self,request,id):
+    def get(self,request,id,token):
+        
         
         certificats_par_date_et_sexe = CertificatNaissance.objects.values('date_deliv_cert', 'sexe_enfant').annotate(count=Count('id'))
         stat=[]
