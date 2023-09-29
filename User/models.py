@@ -124,4 +124,16 @@ class ActeNaiss(models.Model):
         
         
 
+class Certificat_Desc(models.Model):
+    sex_choice=(('m','Masculin'),('f','Feminin'))
+    hopital_id=models.ForeignKey(Hopital,on_delete=models.PROTECT)
+    medecin_traitant=models.CharField(max_length=120,blank=True)
+    nom_defunt=models.CharField(max_length=40,blank=True)
+    post_nom_defunt=models.CharField(max_length=40,blank=True)
+    prenom_defunt=models.CharField(max_length=40,blank=True)
+    sexe_defunt=models.CharField(max_length=1,blank=True,choices=sex_choice,null=False)
     
+    class Meta:
+        verbose_name='Certificat de Décès'
+        verbose_name_plural='Certificats de Décès'
+        unique_together=(('nom_defunt','post_nom_defunt','prenom_defunt'),)

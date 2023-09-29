@@ -90,7 +90,15 @@ class Create_certificatNais(APIView):
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
         
+    def put(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        cert=request.data.get("new_certinaiss")
+        user_type_authorized='hopital'
+                
         
+        return 0    
         
         
 class Create_ActeNais(APIView):
@@ -125,8 +133,8 @@ class Create_ActeNais(APIView):
 
     
 class Get_CertN_par_hopital(APIView):
-    def post(self,request):
-        token=request.data.get('token')
+    def get(self,request,token):
+        token=token
         secret_key=settings.SECRET_KEY
         verification_token=is_access_token_valid(token,secret_key)
         user_type_authorized='hopital'
