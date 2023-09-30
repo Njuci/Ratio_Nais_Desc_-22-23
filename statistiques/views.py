@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from User.models import province, TerriVille
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from .query_acte import voir_stat_act_admin
 from rest_framework import status
 from User.serializer import *
 from User.models import *
@@ -53,8 +54,8 @@ class Voir_stat(APIView):
                 stata['fille']=nombre_filles
                 stata['total']=stata['fille']+stata['garçon']
             stat.append(stata)
-        
-        return Response(stat,status=status.HTTP_200_OK)
+        data={"cert":stat,"acte_naiss":voir_stat_act_admin()}
+        return Response(data,status=status.HTTP_200_OK)
     
 class Voir_stat_par_hop(APIView):
     # Utilisez la méthode "annotate" sur le modèle "CertificatNaissance" pour obtenir le nombre de certificats en fonction des dates et du sexe

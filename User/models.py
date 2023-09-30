@@ -115,7 +115,7 @@ class ActeNaiss(models.Model):
     nom_declarant=models.CharField(max_length=120,blank=True)
     qualite_declarant=models.CharField(max_length=20,blank=True)
     profession_declarant=models.CharField(max_length=20)
-    date_enregitrement=models.DateField(auto_now_add=True)
+    date_enregistrement=models.DateField(auto_now_add=True)
     commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
     langue_redaction=models.CharField(max_length=20,blank=True)
     class Meta:

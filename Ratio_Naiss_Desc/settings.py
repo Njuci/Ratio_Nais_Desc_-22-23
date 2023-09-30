@@ -77,10 +77,10 @@ import dj_database_url
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc',
-        'USER': 'njucimec',
-        'PASSWORD': '3670njci',
-        'HOST': 'db4free.net',
+        'NAME': 'ratio_nais_desc2',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
