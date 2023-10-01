@@ -1,0 +1,21 @@
+databases:
+  - name: mysite
+    databaseName: ratio_nais_desc
+    user: njucimec
+    password: 3670njci
+    host: db4free.net
+    port: 3306
+
+services:
+  - type: web
+    name: mysite
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn Ratio_Naiss_Desc.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        value: "mysql://njucimec:3670njci:3306/ratio_nais_desc"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
