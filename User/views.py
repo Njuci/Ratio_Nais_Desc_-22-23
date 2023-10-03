@@ -58,7 +58,8 @@ class LoginView(APIView):
                 
 
                 return Response({"user_type":user.user_type,
-                                "access":str(token.access_token)}, status=status.HTTP_200_OK)
+                                 "user_id":user.id,
+                                 "access":str(token.access_token)}, status=status.HTTP_200_OK)
             else:
                 # Authentification échouée
                 return Response({'message': 'Identifiants invalides'}, status=status.HTTP_401_UNAUTHORIZED)
