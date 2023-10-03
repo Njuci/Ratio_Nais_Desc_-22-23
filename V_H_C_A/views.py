@@ -65,6 +65,7 @@ class CreateVilleTerr(APIView):
     
 class Create_certificatNais(APIView):
     def post(self,request):
+        print(request.data)
         token=request.data.get('token')
         secret_key=settings.SECRET_KEY
         verification_token=is_access_token_valid(token,secret_key)
@@ -156,3 +157,31 @@ class Get_CertN_par_hopital(APIView):
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
            
             
+            
+class Create_Cert_Desc(APIView):
+    def post(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        cert=request.data.get("new_certidesc")
+        user_type_authorized='hopital'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                hopital=Hopital.objects.get(user=user.id)
+                cert['hopital_id']=hopital.id
+                Certdesc=Certi_Desc_Serial(data=cert)
+                if Certdesc.is_valid():
+                    Certdesc.save()
+                    cert=Certdesc.data['id']
+                    return Response({"message":"Certificat Desc"+ f"{cert}"+" a été enregistré avec succès","data":Certdesc.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":Certdesc.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+                                    
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+    

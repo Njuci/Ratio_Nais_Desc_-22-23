@@ -9,6 +9,15 @@ class UtilisateurSerial(ModelSerializer):
         model = MyUser
         fields = '__all__'
 #commune       
+class ProvinceSerial(ModelSerializer):
+    class Meta:
+        model=province
+        fields="__all__"
+class TerrVilleSerial(ModelSerializer):
+    class Meta:
+        model=TerriVille
+        fields="__all__"    
+
 class CommuneSerial(ModelSerializer):
     class Meta:
         model= Commune
@@ -29,12 +38,9 @@ class CertiNaissSerial(ModelSerializer):
         fields="__all__"
         def get_nom(self,obj):
             return obj.get_nom()
-class ProvinceSerial(ModelSerializer):
-     class Meta:
-         model=province
-         fields = "__all__" 
-class TerrVilleSerial(ModelSerializer):
-     class Meta:
-         model=TerriVille
-         fields = "__all__" 
-         
+        
+        
+class Certi_Desc_Serial(ModelSerializer):
+    class Meta:
+        model=Certificat_Desc
+        fields='__all__'
