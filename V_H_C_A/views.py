@@ -42,6 +42,43 @@ def Get_Territoir_par_prov(request,id):
         
     return Response(serial.data,status=status.HTTP_200_OK)
     
+
+
+@api_view(["GET"])
+def Get_CertificatNaissPrint(request,id):
+    
+    
+    try:
+        certificat=CertificatNaissance.objects.get(id=id)
+        certficatSerial=CertiNaissSerial(certificat)
+        
+        print(certficatSerial.data)
+        ho=(certficatSerial.data['hospital_id'])
+        print(type(ho))
+        hosp=Hopital.objects.get(id=ho)
+        hospCerial=Hopitalserial(hosp)
+        prov=province.objects.get(id=hospCerial.data['prov'])
+        provCerial=ProvinceSerial(prov)
+        tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
+        tvCer=TerrVilleSerial(tv)
+        Cert={"province":provCerial.data,"terriville":tvCer.data,"Certificat":certficatSerial.data}
+        
+        
+        
+        print(hospCerial.data)
+        
+        
+        
+        
+        return Response(Cert,status=status.HTTP_200_OK)
+        
+        
+        
+    except Certificat_Desc.DoesNotExist:
+        return Response({"object":"does not exist"},status=status.HTTP_400_BAD_REQUEST)
+        
+    
+    
 class CreateVilleTerr(APIView):
     def post(self,request):
         serial=TerrVilleSerial(data=request.data)

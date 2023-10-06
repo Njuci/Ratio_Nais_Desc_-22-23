@@ -8,6 +8,13 @@ class UtilisateurSerial(ModelSerializer):
     class Meta:
         model = MyUser
         fields = '__all__'
+
+class UtilisateurSerial2(ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields =['id','username']
+
+
 #commune       
 class ProvinceSerial(ModelSerializer):
     class Meta:

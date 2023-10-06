@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from .serializer import *
+from rest_framework.decorators import api_view
 from datetime import datetime
 from django.contrib.auth import authenticate
 from django.conf import settings
@@ -37,6 +38,16 @@ def chek_user(username):
         return False
     else:
         return True
+    
+@api_view(["GET"])
+def get_user_by_id(request,id):
+    try:
+        mysur=MyUser.objects.get(id=id)
+        user_data=UtilisateurSerial2(mysur)
+        return Response(user_data.data,status=status.HTTP_200_OK)
+    except MyUser.DoesNotExist:
+        return Response({"user":"Does not Exist"},status=status.HTTP_400_BAD_REQUEST)
+    
     
 class LoginView(APIView):
     def post(self, request):
