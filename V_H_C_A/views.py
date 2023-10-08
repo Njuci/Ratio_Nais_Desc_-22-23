@@ -73,8 +73,8 @@ def Get_CertificatNaissPrint(request,id):
         return Response(Cert,status=status.HTTP_200_OK)
         
         
-        
     except Certificat_Desc.DoesNotExist:
+        
         return Response({"object":"does not exist"},status=status.HTTP_400_BAD_REQUEST)
         
     
@@ -170,8 +170,8 @@ class Create_ActeNais(APIView):
         
 
     
-class Get_CertN_par_hopital(APIView):
-    def get(self,request,token):
+class Get_CertN_par_hopital_token(APIView):
+    def get(self,request,token,id):
         token=token
         secret_key=settings.SECRET_KEY
         verification_token=is_access_token_valid(token,secret_key)
@@ -182,11 +182,36 @@ class Get_CertN_par_hopital(APIView):
                 hptl=Hopital.objects.get(user=user.id)
             except Hopital.DoesNotExist:
                 hptl=None
-            if  is_user_authorized(user.user_type,user_type_authorized):
-                cert_par_hopital= CertificatNaissance.objects.filter(hospital_id=hptl.id).order_by('date_deliv_cert')
-                serial=CertiNaissSerial(cert_par_hopital,many=True)
-                return Response(serial.data,status=status.HTTP_200_OK)               
-                   
+            if  is_user_authorized(user.user_type,user_type_authorized) or is_user_authorized(user.user_type,"admin"):
+                try:
+                    certificat=CertificatNaissance.objects.get(id=id)
+                    certficatSerial=CertiNaissSerial(certificat)
+                    hptl=Hopital.objects.get(id=certficatSerial.data['hospital_id'])
+                    hptc=Hopitalserial(hptl)
+                except CertificatNaissance.DoesNotExist:
+                    return Response({"message":"ce certificat n'existe pas "},status=status.HTTP_401_UNAUTHORIZED)
+                print(certificat.hospital_id.id)
+                
+                if hptl.id == certificat.hospital_id or user.user_type=="admin":
+                
+                
+        
+                    print(certficatSerial.data)
+                    ho=(certficatSerial.data['hospital_id'])
+                    print(type(ho))
+                    hosp=Hopital.objects.get(id=ho)
+                    hospCerial=Hopitalserial(hosp)
+                    prov=province.objects.get(id=hospCerial.data['prov'])
+                    provCerial=ProvinceSerial(prov)
+                    tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
+                    tvCer=TerrVilleSerial(tv)
+                    Cert={"province":provCerial.data,"terriville":tvCer.data,"Certificat":certficatSerial.data}
+                    
+            
+                    return Response(Cert,status=status.HTTP_200_OK)
+                else:
+                    return Response({"message":"user non aut"},status=status.HTTP_401_UNAUTHORIZED)
+                    
             else:
                 return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
                 
@@ -221,4 +246,27 @@ class Create_Cert_Desc(APIView):
                                     
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
-    
+class Get_CertN_par_hopital(APIView):
+    def get(self,request,token):
+        token=token
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        user_type_authorized='hopital'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            try:
+                hptl=Hopital.objects.get(user=user.id)
+            except Hopital.DoesNotExist:
+                hptl=None
+            if  is_user_authorized(user.user_type,user_type_authorized):
+                cert_par_hopital= CertificatNaissance.objects.filter(hospital_id=hptl.id).order_by('date_deliv_cert')
+                serial=CertiNaissSerial(cert_par_hopital,many=True)
+                return Response(serial.data,status=status.HTTP_200_OK)               
+                   
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+                
+        else:
+            return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+        
+ 
