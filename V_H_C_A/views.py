@@ -167,7 +167,7 @@ class Create_ActeNais(APIView):
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
         
         
-        
+         
 
     
 class Get_CertN_par_hopital_token(APIView):
@@ -179,9 +179,9 @@ class Get_CertN_par_hopital_token(APIView):
         if verification_token[0]:
             user=MyUser.objects.get(id=verification_token[1]['user_id'])
             try:
-                hptl=Hopital.objects.get(user=user.id)
+                hptl2=Hopital.objects.get(user=user.id)
             except Hopital.DoesNotExist:
-                hptl=None
+                hptl2=None
             if  is_user_authorized(user.user_type,user_type_authorized) or is_user_authorized(user.user_type,"admin"):
                 try:
                     certificat=CertificatNaissance.objects.get(id=id)
@@ -190,17 +190,15 @@ class Get_CertN_par_hopital_token(APIView):
                     hptc=Hopitalserial(hptl)
                 except CertificatNaissance.DoesNotExist:
                     return Response({"message":"ce certificat n'existe pas "},status=status.HTTP_401_UNAUTHORIZED)
-                print(certificat.hospital_id.id)
+                print(certificat.hospital_id)
+                print(hptc['id'])
                 
-                if hptl.id == certificat.hospital_id or user.user_type=="admin":
+                
+                if hptl2.id == certificat.hospital_id.id or user.user_type=="admin":
                 
                 
         
-                    print(certficatSerial.data)
-                    ho=(certficatSerial.data['hospital_id'])
-                    print(type(ho))
-                    hosp=Hopital.objects.get(id=ho)
-                    hospCerial=Hopitalserial(hosp)
+                    hospCerial=hptc
                     prov=province.objects.get(id=hospCerial.data['prov'])
                     provCerial=ProvinceSerial(prov)
                     tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
