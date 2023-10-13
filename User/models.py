@@ -106,7 +106,7 @@ class CertificatNaissance(models.Model):
     class Meta:
         verbose_name='Certificat de Naissance'
         verbose_name_plural='Certificats de Naissance'
-        unique_together=(('nom_enfant','post_nom_enfant','prenom_enfant'),) #en sql cette instruction correspond à la notion des clés composites
+        unique_together=(('nom_enfant','post_nom_enfant','prenom_enfant','date_nais_enfant'),) #en sql cette instruction correspond à la notion des clés composites
         
 class ActeNaiss(models.Model):
     certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)

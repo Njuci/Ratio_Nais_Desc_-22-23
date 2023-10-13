@@ -10,6 +10,8 @@ urlpatterns = [
     path('get_cn_per_hosp/<str:token>',Get_CertN_par_hopital.as_view(),name='get_cn_per_hosp'),
      path('get_cn_per_hosp_or_admin/<str:token>/<int:id>',Get_CertN_par_hopital_token.as_view(),name='get_cn_per_hosp'),
     path('create_certi_desc/',Create_Cert_Desc.as_view(),name='create_certi_desc'),
-    path('print_cert/<int:id>',Get_CertificatNaissPrint,name='print_cert')
+    path('print_cert/<int:id>',Get_CertificatNaissPrint,name='print_cert'),
+    path('get_acte_naiss_par_commune/<str:token>',Get_acteNais_par_commune.as_view(),name='get_acte_naiss_par_commune'),
+
 
 ]
