@@ -12,6 +12,7 @@ urlpatterns = [
     path('create_certi_desc/',Create_Cert_Desc.as_view(),name='create_certi_desc'),
     path('print_cert/<int:id>',Get_CertificatNaissPrint,name='print_cert'),
     path('get_acte_naiss_par_commune/<str:token>',Get_acteNais_par_commune.as_view(),name='get_acte_naiss_par_commune'),
+    path("get_certi_desc_par_hopital/<str:token>",Get_CertDesc_par_hopital.as_view(),name='get_certi_desc_par_hopital')
 
 
 ]

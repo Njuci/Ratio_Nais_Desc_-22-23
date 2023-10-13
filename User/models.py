@@ -133,6 +133,7 @@ class Certificat_Desc(models.Model):
     prenom_defunt=models.CharField(max_length=40,blank=True)
     sexe_defunt=models.CharField(max_length=1,blank=True,choices=sex_choice,null=False)
     cause_desc=models.CharField(max_length=30,blank=True)
+    date_deliv_cert=models.DateField(auto_now_add=True)
     
     class Meta:
         verbose_name='Certificat de Décès'

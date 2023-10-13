@@ -8,4 +8,6 @@ urlpatterns = [
         path('login_user',LoginView.as_view(),name='login_viewsss'),
         path('create_commune',CreateCommune.as_view(),name='create_commune'),
         path('create_hospital',CreateHospital.as_view(),name='create_hospital')
+        
         ]
+

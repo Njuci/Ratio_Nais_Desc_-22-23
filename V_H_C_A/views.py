@@ -266,6 +266,31 @@ class Get_CertN_par_hopital(APIView):
                 
         else:
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+
+class Get_CertDesc_par_hopital(APIView):
+    def get(self,request,token):
+        token=token
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        user_type_authorized='hopital'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            try:
+                hptl=Hopital.objects.get(user=user.id)
+            except Hopital.DoesNotExist:
+                hptl=None
+            if  is_user_authorized(user.user_type,user_type_authorized):
+                cert_par_hopital= Certificat_Desc.objects.filter(hopital_id=hptl.id).order_by('date_deliv_cert')
+                serial=Certi_Desc_Serial(cert_par_hopital,many=True)
+                return Response(serial.data,status=status.HTTP_200_OK)               
+                   
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+                
+        else:
+            return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        
 class Get_acteNais_par_commune(APIView):
     def get(self,request,token):
         token=token
