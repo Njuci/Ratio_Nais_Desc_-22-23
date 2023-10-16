@@ -271,9 +271,10 @@ class Get_CertDesc_par_hopital(APIView):
     def get(self,request,token):
         token=token
         secret_key=settings.SECRET_KEY
-        verification_token=is_access_token_valid(token,secret_key)
+        verification_token=is_access_token_valid(token,secret_key)    
+        print(type(verification_token))    
         user_type_authorized='hopital'
-        if verification_token[0]:
+        if verification_token[0]==True:
             user=MyUser.objects.get(id=verification_token[1]['user_id'])
             try:
                 hptl=Hopital.objects.get(user=user.id)

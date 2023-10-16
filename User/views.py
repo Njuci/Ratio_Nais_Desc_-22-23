@@ -14,18 +14,19 @@ from django.conf import settings
 import jwt
 
 def is_access_token_valid(access_token, secret_key):
+    decoded_token=None
     try:
         decoded_token = jwt.decode(access_token, secret_key, algorithms=['HS256'])
         expiration_time = datetime.fromtimestamp(decoded_token['exp'])
         current_time = datetime.now()
 
         if current_time < expiration_time:
-            return True, decoded_token
+            return [True, decoded_token]
         else:
             decoded_token=None
-            return False,decoded_token
+            return [False,decoded_token]
     except jwt.ExpiredSignatureError:
-        return False
+        return False,decoded_token
 
 
 def chek_user(username):
