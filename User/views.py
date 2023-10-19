@@ -193,3 +193,26 @@ class CreateHospital(APIView):
          
          message={"token":"invalide access_token veuillez vous authentifiez"}
          return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+     def put(self,request):
+         print(request.data)
+         valid_type_user="admin"
+         secret_key=settings.SECRET_KEY
+         token=request.data['token']
+         new_user_hopital=request.data['new_user_hospital']
+         info_hopital=request.data['info_hospital']
+         valid_token=is_access_token_valid(token,secret_key)
+         if valid_token[0]:
+             request_user=valid_token[1]['user_id']
+             user_request=MyUser.objects.get(id=request_user)
+             if is_user_authorized(user_request.user_type,valid_type_user):
+                 new_user_name=new_user_hopital['username']
+                 user_verif=chek_user(username=new_user_name)                 
+                 return Response({"message":"l' utilisateur hosipal existe deja"},status=status.HTTP_400_BAD_REQUEST)
+                
+             else:
+                 message={"message":"ce type des users n'est pas autorisé à faire cette action"}            
+                 return Response(message,status=status.HTTP_401_UNAUTHORIZED)
+         
+         
+         message={"token":"invalide access_token veuillez vous authentifiez"}
+         return Response(message,status=status.HTTP_401_UNAUTHORIZED)

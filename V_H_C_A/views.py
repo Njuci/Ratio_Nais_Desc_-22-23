@@ -151,7 +151,7 @@ class Create_ActeNais(APIView):
             if is_user_authorized(user.user_type,user_type_authorized):
                 commune=Commune.objects.get(user=user.id)
                 act['commune']=commune.id
-                ActNaiss=CertiNaissSerial(data=act)
+                ActNaiss=ActeNaissSerial(data=act)
                 if ActNaiss.is_valid():
                     ActNaiss.save()
                     act=ActNaiss.data['id']
