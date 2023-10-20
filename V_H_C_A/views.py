@@ -137,7 +137,23 @@ class Create_certificatNais(APIView):
                 
         
         return 0    
-        
+    def delete(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        cert_id=request.data.get("cert_id")
+        user_type_authorized='hopital'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                hopital=Hopital.objects.get(user=user.id)
+                cert_naiss=CertificatNaissance.objects.get(id=cert_id,hospital_id=hopital.id)
+                cert_naiss.delete()
+                return Response({"message":"Certificat de naissance a été supprimé avec succès"},status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)    
         
 class Create_ActeNais(APIView):
     def post(self,request):
@@ -165,7 +181,48 @@ class Create_ActeNais(APIView):
                                     
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
-        
+    def put(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        act_id=request.data.get("act_id")
+        act=request.data.get("new_actenaiss")
+        user_type_authorized='commune'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                commune=Commune.objects.get(user=user.id)
+                act_naiss=ActeNaiss.objects.get(id=act_id,commune=commune.id)
+                act_naiss_serial=ActeNaissSerial(instance=act_naiss,data=act,partial=True)
+                if act_naiss_serial.is_valid():
+                    act_naiss_serial.save()
+                    return Response({"message":"Acte de naissance a été mis à jour avec succès","data":act_naiss_serial.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":act_naiss_serial.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+    def delete(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        act_id=request.data.get("act_id")
+        user_type_authorized='commune'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                commune=Commune.objects.get(user=user.id)
+                act_naiss=ActeNaiss.objects.get(id=act_id,commune=commune.id)
+                act_naiss.delete()
+                return Response({"message":"Acte de naissance a été supprimé avec succès"},status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+
+
         
          
 
@@ -244,6 +301,30 @@ class Create_Cert_Desc(APIView):
                                     
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+    def put(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        cert_id=request.data.get("cert_id")
+        cert=request.data.get("new_certidesc")
+        user_type_authorized='hopital'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                hopital=Hopital.objects.get(user=user.id)
+                
+                cert_desc=Certdesc.objects.get(id=cert_id,hopital_id=hopital.id)
+                Certdesc=Certi_Desc_Serial(instance=cert_desc,data=cert,partial=True)
+                if Certdesc.is_valid():
+                    Certdesc.save()
+                    return Response({"message":"Certificat Desc a été mis à jour avec succès","data":Certdesc.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":Certdesc.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
 class Get_CertN_par_hopital(APIView):
     def get(self,request,token):
         token=token
@@ -291,6 +372,9 @@ class Get_CertDesc_par_hopital(APIView):
         else:
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
         
+
+
+
         
 class Get_acteNais_par_commune(APIView):
     def get(self,request,token):
