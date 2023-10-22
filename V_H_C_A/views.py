@@ -177,9 +177,11 @@ class Create_ActeNais(APIView):
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
                 
             else:
+                print(token,388)                
                 return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
                                     
         else:
+            print(token,3855)
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
     def put(self,request):
         token=request.data.get('token')
