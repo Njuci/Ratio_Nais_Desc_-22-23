@@ -81,6 +81,7 @@ DATABASES = {
         'NAME': 'ratio_nais_desc',
         'USER': 'njucimec',
         'PASSWORD': '3670njci',
+        
         'HOST': 'db4free.net',
         'PORT': '3306',
     }
