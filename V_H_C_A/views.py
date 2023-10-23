@@ -61,7 +61,7 @@ def Get_CertificatNaissPrint(request,id):
         provCerial=ProvinceSerial(prov)
         tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
         tvCer=TerrVilleSerial(tv)
-        Cert={"province":provCerial.data,"terriville":tvCer.data,"Certificat":certficatSerial.data}
+        Cert={"province":provCerial.data,"terriville":tvCer.data,"hospital":hospCerial.data,"Certificat":certficatSerial.data}
         
         
         

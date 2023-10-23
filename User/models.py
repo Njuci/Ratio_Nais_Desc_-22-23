@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+import qrcode
+from io import BytesIO
+from django.core.files import File 
+from PIL import Image, ImageDraw
 
 
 
@@ -96,7 +100,21 @@ class CertificatNaissance(models.Model):
     nationalite_mere=models.CharField(max_length=20)
     localite_parent=models.CharField(max_length=20,blank=True)
     collectiv_parent=models.CharField(max_length=20,blank=True)
-   
+    url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
+    cod_qr=models.ImageField(upload_to="certificat_naissance",null=True,blank=True)
+    
+    def save(self, *args, **kwargs):
+        qr_image = qrcode.make(self.id)
+        canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
+        draw = ImageDraw.Draw(canvas)
+        canvas.paste(qr_image)
+        file_name = f'qr_code_Certinaissance-{self.hospital_id}/{self.nom_enfant+self.post_nom_enfant+self.prenom_enfant}.png'
+        buffer = BytesIO()
+        canvas.save(buffer, 'PNG')
+        self.cod_qr.save(file_name, File(buffer), save=False)
+        canvas.close()
+        self.url_qrcode=self.cod_qr.url
+        return super().save(*args, **kwargs)
     def __str__(self) -> str:
         return f'cert{self.hospital_id}'+f'{self.id}'
     
