@@ -129,7 +129,7 @@ class CertificatNaissance(models.Model):
         
 class ActeNaiss(models.Model):
     certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)
-    numeros_volume=models.CharField(max_length=5,blank=True)
+    numeros_volume=models.CharField(max_length=15,blank=True)
     numeros_folio=models.CharField(max_length=5,blank=True,null=True)
     nom_declarant=models.CharField(max_length=120,blank=True)
     qualite_declarant=models.CharField(max_length=20,blank=True)
@@ -137,12 +137,28 @@ class ActeNaiss(models.Model):
     date_enregistrement=models.DateField(auto_now_add=True)
     commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
     langue_redaction=models.CharField(max_length=20,blank=True)
+    url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
+    cod_qr=models.ImageField(upload_to="acte_naissance",null=True,blank=True)
+    
+    def code_qrfound(self, *args, **kwargs):
+        qr_infos= {"Acte de Naissance N° ":self.pk,"nom":self.certNais_id.nom_enfant,"post_nom":self.certNais_id.post_nom_enfant,"prenom":self.certNais_id.prenom_enfant,"hopital_denom":self.commune.denom}
+        qr_image = qrcode.make(qr_infos)
+        canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
+        draw = ImageDraw.Draw(canvas)
+        canvas.paste(qr_image)
+        file_name = f'qr_code_Actenaissance-{self.certNais_id.hospital_id}{self.certNais_id.nom_enfant+self.certNais_id.post_nom_enfant+self.certNais_id.prenom_enfant+self.pk}.png'
+        buffer = BytesIO()
+        canvas.save(buffer, 'PNG')
+        self.cod_qr.save(file_name, File(buffer), save=False)
+        canvas.close()
+        self.url_qrcode=self.cod_qr.url
+        return super(ActeNaiss,self).save(*args, **kwargs)
     class Meta:
         verbose_name='Acte  de Naissance'
         verbose_name_plural='Actes de Naissance'
         
         
-
+ 
 class Certificat_Desc(models.Model):
     sex_choice=(('m','Masculin'),('f','Feminin'))
     hopital_id=models.ForeignKey(Hopital,on_delete=models.PROTECT)
@@ -151,10 +167,67 @@ class Certificat_Desc(models.Model):
     post_nom_defunt=models.CharField(max_length=40,blank=True)
     prenom_defunt=models.CharField(max_length=40,blank=True)
     sexe_defunt=models.CharField(max_length=1,blank=True,choices=sex_choice,null=False)
+    lieu_naissance=models.CharField(max_length=120,blank=True)
+    date_naissance_defunt=models.DateField()
+    profession_defunt=models.CharField(max_length=40,blank=True)
     cause_desc=models.CharField(max_length=30,blank=True)
+    date_desc=models.DateField()
     date_deliv_cert=models.DateField(auto_now_add=True)
+    url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
+    cod_qr=models.ImageField(upload_to="certificat_desces",null=True,blank=True)
+    
+    def code_qrfound(self, *args, **kwargs):
+        qr_infos= {"Certificat de Descès N° ":self.pk,"nom":self.nom_defunt,"post_nom":self.post_nom_defunt,"prenom":self.prenom_defunt,"hopital_denom":self.hopital_id.denom}
+        qr_image = qrcode.make(qr_infos)
+        canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
+        draw = ImageDraw.Draw(canvas)
+        canvas.paste(qr_image)
+        file_name = f'qr_code_CertDesces-{self.hopital_id}{self.nom_defunt+self.post_nom_defunt+self.prenom_defunt+self.pk}.png'
+        buffer = BytesIO()
+        canvas.save(buffer, 'PNG')
+        self.cod_qr.save(file_name, File(buffer), save=False)
+        canvas.close()
+        self.url_qrcode=self.cod_qr.url
+        return super(ActeNaiss,self).save(*args, **kwargs)
     
     class Meta:
         verbose_name='Certificat de Décès'
         verbose_name_plural='Certificats de Décès'
         unique_together=(('nom_defunt','post_nom_defunt','prenom_defunt'),)
+class ActeDesc(models.Model):
+    etat_civile_choice=(('m','Marié'),('c','Celibataire'))
+    cert_desc_id=models.OneToOneField(Certificat_Desc,on_delete=models.CASCADE)
+    numeros_volume=models.CharField(max_length=15,blank=True)
+    nom_declarant=models.CharField(max_length=120,blank=True)
+    qualite_declarant=models.CharField(max_length=20,blank=True)
+    profession_declarant=models.CharField(max_length=20,blank=True)
+    residence_principale=models.CharField(max_length=220,blank=True)
+    residence_temporaire=models.CharField(max_length=220,blank=True,null=True,default=None)
+    nationalite=models.CharField(max_length=40,blank=True)
+    etat_civile=models.CharField(max_length=1,choices=etat_civile_choice,blank=True)
+    conjoint_identite=models.CharField(max_length=120,blank=True,null=True)
+    nom_complet_pere=models.CharField(max_length=120,blank=True)
+    nom_complet_mere=models.CharField(max_length=120,blank=True)
+    date_enregistrement=models.DateField(auto_now_add=True)
+    commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
+    langue_redaction=models.CharField(max_length=20,blank=True)
+    url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
+    cod_qr=models.ImageField(upload_to="acte_naissance",null=True,blank=True)
+    
+    def code_qrfound(self, *args, **kwargs):
+        qr_infos= {"Acte de Descès N° ":self.pk,"nom":self.cert_desc_id.nom_defunt,"post_nom":self.cert_desc_id.post_nom_defunt,"prenom":self.cert_desc_id.prenom_defunt,"hopital_denom":self.cert_desc_id.hopital_id.denom}
+        qr_image = qrcode.make(qr_infos)
+        canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
+        draw = ImageDraw.Draw(canvas)
+        canvas.paste(qr_image)
+        file_name = f'qr_code_ActeDesces-{self.cert_desc_id.hopital_id}{self.cert_desc_id.nom_defunt+self.cert_desc_id.post_nom_defunt+self.cert_desc_id.prenom_defunt+self.pk}.png'
+        buffer = BytesIO()
+        canvas.save(buffer, 'PNG')
+        self.cod_qr.save(file_name, File(buffer), save=False)
+        canvas.close()
+        self.url_qrcode=self.cod_qr.url
+        return super(ActeDesc,self).save(*args, **kwargs)
+    class Meta:
+        verbose_name='Acte  de Descès'
+        verbose_name_plural='Actes de Descès'
+        
