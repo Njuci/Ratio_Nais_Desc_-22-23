@@ -117,7 +117,10 @@ class Create_certificatNais(APIView):
                 if CertSerial.is_valid():
                     CertSerial.save()
                     cert=CertSerial.data['id']
-                    return Response({"message":"Certificat"+ f"{cert}"+" a été enregistré avec succès","data":CertSerial.data},status=status.HTTP_201_CREATED)
+                    certN=CertificatNaissance.objects.get(id=cert)
+                    U =certN.code_qrfound()
+                    CertSeria=CertiNaissSerial(certN)                    
+                    return Response({"message":"Certificat"+ f"{cert}"+" a été enregistré avec succès","data":CertSeria.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":CertSerial.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
@@ -319,6 +322,7 @@ class Create_Cert_Desc(APIView):
                 Certdesc=Certi_Desc_Serial(instance=cert_desc,data=cert,partial=True)
                 if Certdesc.is_valid():
                     Certdesc.save()
+                    
                     return Response({"message":"Certificat Desc a été mis à jour avec succès","data":Certdesc.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":Certdesc.errors}

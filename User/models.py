@@ -95,7 +95,7 @@ class CertificatNaissance(models.Model):
     nationalite_pere=models.CharField(max_length=20,blank=True)    
     nom_complet_mere=models.CharField(max_length=120,blank=True)
     profession_mere=models.CharField(max_length=20,blank=True)
-    date_nais_mere=models.DateField()
+    date_nais_mere=models.DateField() 
     lieu_nais_mere=models.CharField(max_length=20,blank=True)
     nationalite_mere=models.CharField(max_length=20)
     localite_parent=models.CharField(max_length=20,blank=True)
@@ -103,8 +103,8 @@ class CertificatNaissance(models.Model):
     url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
     cod_qr=models.ImageField(upload_to="certificat_naissance",null=True,blank=True)
     
-    def save(self, *args, **kwargs):
-        qr_image = qrcode.make(self.id)
+    def code_qrfound(self, *args, **kwargs):
+        qr_image = qrcode.make(self.pk)
         canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
         draw = ImageDraw.Draw(canvas)
         canvas.paste(qr_image)
@@ -114,7 +114,7 @@ class CertificatNaissance(models.Model):
         self.cod_qr.save(file_name, File(buffer), save=False)
         canvas.close()
         self.url_qrcode=self.cod_qr.url
-        return super().save(*args, **kwargs)
+        return super(CertificatNaissance,self).save(*args, **kwargs)
     def __str__(self) -> str:
         return f'cert{self.hospital_id}'+f'{self.id}'
     
@@ -124,7 +124,7 @@ class CertificatNaissance(models.Model):
     class Meta:
         verbose_name='Certificat de Naissance'
         verbose_name_plural='Certificats de Naissance'
-        unique_together=(('nom_enfant','post_nom_enfant','prenom_enfant','date_nais_enfant'),) #en sql cette instruction correspond à la notion des clés composites
+        unique_together=(('nom_enfant','post_nom_enfant','prenom_enfant','sexe_enfant','date_nais_enfant'),) #en sql cette instruction correspond à la notion des clés composites
         
 class ActeNaiss(models.Model):
     certNais_id=models.OneToOneField(CertificatNaissance,on_delete=models.CASCADE)
