@@ -104,7 +104,8 @@ class CertificatNaissance(models.Model):
     cod_qr=models.ImageField(upload_to="certificat_naissance",null=True,blank=True)
     
     def code_qrfound(self, *args, **kwargs):
-        qr_image = qrcode.make(self.pk)
+        qr_infos= {"Certificat de Naissance N° ":self.pk,"nom":self.nom_enfant,"post_nom":self.post_nom_enfant,"prenom":self.prenom_enfant,"hopital_denom":self.hospital_id.denom}
+        qr_image = qrcode.make(qr_infos)
         canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
         draw = ImageDraw.Draw(canvas)
         canvas.paste(qr_image)

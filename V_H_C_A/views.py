@@ -132,14 +132,35 @@ class Create_certificatNais(APIView):
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
         
     def put(self,request):
-        token=request.data.get('token')
+        token=request.data['token']
         secret_key=settings.SECRET_KEY
         verification_token=is_access_token_valid(token,secret_key)
-        cert=request.data.get("new_certinaiss")
+        cert_id=request.data['certNaiss_id']
+        cert_naissance=request.data['cert_naiss']
         user_type_authorized='hopital'
-                
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                hopital=Hopital.objects.get(user=user.id)
+                cert_naiss=CertificatNaissance.objects.get(id=cert_id,hospital_id=hopital.id)
+                cert_naiss_serial=CertiNaissSerial(instance=cert_naiss,data=cert_naissance,partial=True)
+                if cert_naiss_serial.is_valid():
+                    cert_naiss_serial.save()
+                    certN=CertificatNaissance.objects.get(id=cert_naiss_serial.data['id'])
+                    U =certN.code_qrfound()
+                    CertSeria=CertiNaissSerial(certN)              
+                    
+                    
+                    return Response({"message":"Acte de naissance a été mis à jour avec succès","data":CertSeria.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":cert_naiss_serial.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)        
         
-        return 0    
+        
     def delete(self,request):
         token=request.data.get('token')
         secret_key=settings.SECRET_KEY
@@ -191,7 +212,7 @@ class Create_ActeNais(APIView):
         secret_key=settings.SECRET_KEY
         verification_token=is_access_token_valid(token,secret_key)
         act_id=request.data.get("act_id")
-        act=request.data.get("new_actenaiss")
+        act=request.data.get("actenaiss")
         user_type_authorized='commune'
         if verification_token[0]:
             user=MyUser.objects.get(id=verification_token[1]['user_id'])
@@ -228,10 +249,7 @@ class Create_ActeNais(APIView):
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
 
 
-        
          
-
-    
 class Get_CertN_par_hopital_token(APIView):
     def get(self,request,token,id):
         token=token
@@ -256,18 +274,14 @@ class Get_CertN_par_hopital_token(APIView):
                 print(hptc['id'])
                 
                 
-                if hptl2.id == certificat.hospital_id.id or user.user_type=="admin":
-                
-                
-        
+                if hptl2.id == certificat.hospital_id.id or user.user_type=="admin":                
                     hospCerial=hptc
                     prov=province.objects.get(id=hospCerial.data['prov'])
                     provCerial=ProvinceSerial(prov)
                     tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
                     tvCer=TerrVilleSerial(tv)
                     Cert={"province":provCerial.data,"terriville":tvCer.data,"Certificat":certficatSerial.data}
-                    
-            
+                               
                     return Response(Cert,status=status.HTTP_200_OK)
                 else:
                     return Response({"message":"user non aut"},status=status.HTTP_401_UNAUTHORIZED)
@@ -311,13 +325,12 @@ class Create_Cert_Desc(APIView):
         secret_key=settings.SECRET_KEY
         verification_token=is_access_token_valid(token,secret_key)
         cert_id=request.data.get("cert_id")
-        cert=request.data.get("new_certidesc")
+        cert=request.data.get("certidesc")
         user_type_authorized='hopital'
         if verification_token[0]:
             user=MyUser.objects.get(id=verification_token[1]['user_id'])
             if is_user_authorized(user.user_type,user_type_authorized):
-                hopital=Hopital.objects.get(user=user.id)
-                
+                hopital=Hopital.objects.get(user=user.id)                
                 cert_desc=Certdesc.objects.get(id=cert_id,hopital_id=hopital.id)
                 Certdesc=Certi_Desc_Serial(instance=cert_desc,data=cert,partial=True)
                 if Certdesc.is_valid():
@@ -398,7 +411,7 @@ class Get_acteNais_par_commune(APIView):
             if  is_user_authorized(user.user_type,user_type_authorized):
                 acte_naisscerial=ActeNaiss.objects.filter(commune_id=hptl.id).order_by('date_enregistrement')
                 serial= ActeNaissSerial(acte_naisscerial,many=True)
-                return Response(serial.data,status=status.HTTP_200_OK)               
+                return Response(serial.data,status=status.HTTP_200_OK)     
                    
             else:
                 return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
