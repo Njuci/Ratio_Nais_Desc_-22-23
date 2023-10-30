@@ -212,7 +212,7 @@ class ActeDesc(models.Model):
     commune=models.ForeignKey(Commune,on_delete=models.PROTECT)
     langue_redaction=models.CharField(max_length=20,blank=True)
     url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
-    cod_qr=models.ImageField(upload_to="acte_naissance",null=True,blank=True)
+    cod_qr=models.ImageField(upload_to="acte_desc",null=True,blank=True)
     
     def code_qrfound(self, *args, **kwargs):
         qr_infos= {"Acte de Descès N° ":self.pk,"nom":self.cert_desc_id.nom_defunt,"post_nom":self.cert_desc_id.post_nom_defunt,"prenom":self.cert_desc_id.prenom_defunt,"hopital_denom":self.cert_desc_id.hopital_id.denom}

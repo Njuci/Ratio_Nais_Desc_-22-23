@@ -404,11 +404,7 @@ class Get_CertDesc_par_hopital(APIView):
                 
         else:
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
-        
-
-
-
-        
+       
 class Get_acteNais_par_commune(APIView):
     def get(self,request,token):
         token=token
@@ -432,7 +428,7 @@ class Get_acteNais_par_commune(APIView):
                 
         else:
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)        
-class Create_ActeNais(APIView):
+class Create_ActeDesc(APIView):
     def post(self,request):
         token=request.data.get('token')
         secret_key=settings.SECRET_KEY
