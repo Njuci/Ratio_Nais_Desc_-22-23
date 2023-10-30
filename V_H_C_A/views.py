@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate
 from User.views import chek_user,is_access_token_valid,is_user_authorized
 class CreateProvince(APIView):
     def post(self,request):
-        print(request.data)
+        
         serial=ProvinceSerial(data=request.data)
         print()
         if serial.is_valid():
@@ -195,7 +195,9 @@ class Create_ActeNais(APIView):
                 if ActNaiss.is_valid():
                     ActNaiss.save()
                     act=ActNaiss.data['id']
-                    return Response({"message":"Certificat"+ f"{act}"+" a été enregistré avec succès","data":ActNaiss.data},status=status.HTTP_201_CREATED)
+                    acte=ActeNaiss.objects.get(id=act)
+                    serial=ActeNaissSerial(acte)
+                    return Response({"message":"Certificat"+ f"{act}"+" a été enregistré avec succès","data":serial.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":ActNaiss.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
@@ -222,7 +224,12 @@ class Create_ActeNais(APIView):
                 act_naiss_serial=ActeNaissSerial(instance=act_naiss,data=act,partial=True)
                 if act_naiss_serial.is_valid():
                     act_naiss_serial.save()
-                    return Response({"message":"Acte de naissance a été mis à jour avec succès","data":act_naiss_serial.data},status=status.HTTP_201_CREATED)
+                    
+                    act=act_naiss_serial.data['id']
+                    acte=ActeNaiss.objects.get(id=act)
+                    serial=ActeNaissSerial(acte)
+
+                    return Response({"message":"Acte de naissance a été mis à jour avec succès","data":serial.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":act_naiss_serial.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
@@ -310,7 +317,10 @@ class Create_Cert_Desc(APIView):
                 if Certdesc.is_valid():
                     Certdesc.save()
                     cert=Certdesc.data['id']
-                    return Response({"message":"Certificat Desc"+ f"{cert}"+" a été enregistré avec succès","data":Certdesc.data},status=status.HTTP_201_CREATED)
+                    cert_des=Certificat_Desc.objects.get(id=cert)
+                    U=cert_des.code_qrfound()
+                    serial=Certi_Desc_Serial(cert_des)
+                    return Response({"message":"Certificat Desc"+ f"{cert}"+" a été enregistré avec succès","data":serial.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":Certdesc.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
@@ -334,9 +344,13 @@ class Create_Cert_Desc(APIView):
                 cert_desc=Certdesc.objects.get(id=cert_id,hopital_id=hopital.id)
                 Certdesc=Certi_Desc_Serial(instance=cert_desc,data=cert,partial=True)
                 if Certdesc.is_valid():
-                    Certdesc.save()
+                    Certdesc.save()                    
+                    cert=Certdesc.data['id']
+                    cert_des=Certificat_Desc.objects.get(id=cert)
+                    cert_des.cod_qr()
+                    serial=Certi_Desc_Serial(cert_des)
                     
-                    return Response({"message":"Certificat Desc a été mis à jour avec succès","data":Certdesc.data},status=status.HTTP_201_CREATED)
+                    return Response({"message":"Certificat Desc a été mis à jour avec succès","data":serial.data},status=status.HTTP_201_CREATED)
                 else:
                     message={"message":"les donnees sont mal envoyé","errors":Certdesc.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
@@ -418,3 +432,75 @@ class Get_acteNais_par_commune(APIView):
                 
         else:
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)        
+class Create_ActeNais(APIView):
+    def post(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        act=request.data.get("new_acte_desc")
+        user_type_authorized='commune'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                commune=Commune.objects.get(user=user.id)
+                act['commune']=commune.id
+                Actdesc=Acte_Desc_Serial(data=act)
+                if Actdesc.is_valid():
+                    Actdesc.save()
+                    act=Actdesc.data['id']
+                    return Response({"message":"Certificat"+ f"{act}"+" a été enregistré avec succès","data":Actdesc.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":Actdesc.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+                
+            else:
+                print(token,388)                
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+                                    
+        else:
+            print(token,3855)
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+    def put(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        act_id=request.data.get("act_id")
+        act=request.data.get("acte_desc")
+        user_type_authorized='commune'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                commune=Commune.objects.get(user=user.id)
+                act_desc=ActeDesc.objects.get(id=act_id,commune=commune.id)
+                act_desc_serial=Acte_Desc_Serial(instance=act_desc,data=act,partial=True)
+                if act_desc_serial.is_valid():
+                    act_desc_serial.save()
+                    acte=ActeDesc.objects.get(request.data['act_id'])
+                    acte.code_qrfound()
+                    acte_ser=Acte_Desc_Serial(acte)
+                    return Response({"message":"Acte de naissance a été mis à jour avec succès","data":acte_ser.data},status=status.HTTP_201_CREATED)
+                else:
+                    message={"message":"les donnees sont mal envoyé","errors":act_desc_serial.errors}
+                    return Response(message,status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+    def delete(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        act_id=request.data.get("act_id")
+        user_type_authorized='commune'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                commune=Commune.objects.get(user=user.id)
+                act_desc=ActeDesc.objects.get(id=act_id,commune=commune.id)
+                act_desc.delete()
+                return Response({"message":"Acte de desces a été supprimé avec succès"},status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+

@@ -51,3 +51,9 @@ class Certi_Desc_Serial(ModelSerializer):
     class Meta:
         model=Certificat_Desc
         fields='__all__'
+        
+class Acte_Desc_Serial(ModelSerializer):
+    class Meta:
+        model=ActeDesc
+        fields='__all__'
+        

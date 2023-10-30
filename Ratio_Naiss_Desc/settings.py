@@ -79,9 +79,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ratio_nais_desc',
-        'USER': 'root',
-        'PASSWORD': '',        
-        'HOST': 'localhost',
+        'USER': 'njucimec',
+        'PASSWORD': '3670njci',        
+        'HOST': 'db4free.net',
         'PORT': '3306',
     }
 }

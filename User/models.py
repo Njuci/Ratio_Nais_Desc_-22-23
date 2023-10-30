@@ -109,7 +109,7 @@ class CertificatNaissance(models.Model):
         canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
         draw = ImageDraw.Draw(canvas)
         canvas.paste(qr_image)
-        file_name = f'qr_code_Certinaissance-{self.hospital_id}/{self.nom_enfant+self.post_nom_enfant+self.prenom_enfant}.png'
+        file_name = f'qr_code_Certinaissance-{self.hospital_id}/{self.nom_enfant}{self.post_nom_enfant}{self.prenom_enfant}.png'
         buffer = BytesIO()
         canvas.save(buffer, 'PNG')
         self.cod_qr.save(file_name, File(buffer), save=False)
@@ -146,7 +146,7 @@ class ActeNaiss(models.Model):
         canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
         draw = ImageDraw.Draw(canvas)
         canvas.paste(qr_image)
-        file_name = f'qr_code_Actenaissance-{self.certNais_id.hospital_id}{self.certNais_id.nom_enfant+self.certNais_id.post_nom_enfant+self.certNais_id.prenom_enfant+self.pk}.png'
+        file_name = f'qr_code_Actenaissance-{self.certNais_id.hospital_id}{self.certNais_id.nom_enfant}{self.certNais_id.post_nom_enfant}{self.certNais_id.prenom_enfant}{self.pk}.png'
         buffer = BytesIO()
         canvas.save(buffer, 'PNG')
         self.cod_qr.save(file_name, File(buffer), save=False)
@@ -182,13 +182,13 @@ class Certificat_Desc(models.Model):
         canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
         draw = ImageDraw.Draw(canvas)
         canvas.paste(qr_image)
-        file_name = f'qr_code_CertDesces-{self.hopital_id}{self.nom_defunt+self.post_nom_defunt+self.prenom_defunt+self.pk}.png'
+        file_name = f'qr_code_CertDesces-{self.hopital_id}{self.nom_defunt}{self.post_nom_defunt}{self.prenom_defunt}{self.pk}.png'
         buffer = BytesIO()
         canvas.save(buffer, 'PNG')
         self.cod_qr.save(file_name, File(buffer), save=False)
         canvas.close()
         self.url_qrcode=self.cod_qr.url
-        return super(ActeNaiss,self).save(*args, **kwargs)
+        return super(Certificat_Desc,self).save(*args, **kwargs)
     
     class Meta:
         verbose_name='Certificat de Décès'
@@ -220,7 +220,7 @@ class ActeDesc(models.Model):
         canvas = Image.new('RGB', (qr_image.pixel_size, qr_image.pixel_size), 'white')
         draw = ImageDraw.Draw(canvas)
         canvas.paste(qr_image)
-        file_name = f'qr_code_ActeDesces-{self.cert_desc_id.hopital_id}{self.cert_desc_id.nom_defunt+self.cert_desc_id.post_nom_defunt+self.cert_desc_id.prenom_defunt+self.pk}.png'
+        file_name = f'qr_code_ActeDesces-{self.cert_desc_id.hopital_id}{self.cert_desc_id.nom_defunt}{self.cert_desc_id.post_nom_defunt}{self.cert_desc_id.prenom_defunt}{self.pk}.png'
         buffer = BytesIO()
         canvas.save(buffer, 'PNG')
         self.cod_qr.save(file_name, File(buffer), save=False)
