@@ -476,7 +476,7 @@ class Create_ActeDesc(APIView):
                     acte_ser=Acte_Desc_Serial(acte)
                     return Response({"message":"Acte de naissance a été mis à jour avec succès","data":acte_ser.data},status=status.HTTP_201_CREATED)
                 else:
-                    message={"message":"les donnees sont mal envoyé","errors":act_desc_serial.errors}
+                    message={"message":"les données sont mal envoyé","errors":act_desc_serial.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
