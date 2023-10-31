@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "Ratio_Naiss_Desc/wsgi.py",
-      "use": "@vercel/python",
+      "use": "@vercel/python39",
       "config": {
         "maxLambdaSize": "15mb",
         "runtime": "python3.9",
