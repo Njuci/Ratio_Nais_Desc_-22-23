@@ -164,6 +164,7 @@ class Create_certificatNais(APIView):
     def delete(self,request):
         token=request.data.get('token')
         secret_key=settings.SECRET_KEY
+        print(type(token))
         verification_token=is_access_token_valid(token,secret_key)
         cert_id=request.data.get("cert_id")
         user_type_authorized='hopital'

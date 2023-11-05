@@ -22,7 +22,7 @@ class Voir_stat(APIView):
        
         try:
                 
-            certificats =CertificatNaissance.objects.values('date_deliv_cert', 'sexe_enfant').annotate(count=Count('id'))
+            certificats =CertificatNaissance.objects.values('date_deliv_cert', 'sexe_enfant').order_by('-date_deliv_cert').annotate(count=Count('id'))
         except CertificatNaissance.DoesNotExist:
             return Response({"message":"l'hopital n'a pas de certoificats enregistrer"})
             # Triez les certificats par date
@@ -54,7 +54,7 @@ class Voir_stat(APIView):
                 stata['fille']=nombre_filles
                 stata['total']=stata['fille']+stata['garçon']
             stat.append(stata)
-        data={"cert":stat,"acte_naiss":voir_stat_act_admin()}
+        data={"cert_naissance":stat,"acte_naiss":voir_stat_act_admin()}
         return Response(data,status=status.HTTP_200_OK)
     
 class Voir_stat_par_hop(APIView):
