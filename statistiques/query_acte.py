@@ -77,7 +77,7 @@ def voir_cert_desc_admin():
         stata={ }   
             
         for certificat in groupe:
-            sexe_enfant = certificat['sexe_enfant']
+            sexe_enfant = certificat['sexe_defunt']
             nombre_certificats = certificat['count']
             print(sexe_enfant,nombre_certificats)
                     
