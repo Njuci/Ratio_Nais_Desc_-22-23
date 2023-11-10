@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from User.models import province, TerriVille
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .query_acte import voir_stat_act_admin,voir_certnais_admin,voir_hopital_cert_naissance,voir_stat_act_desc_admin,voir_cert_desc_admin
+from .query_acte import (voir_stat_act_naiss_admin,voir_certnais_admin,voir_stat_act_desc_admin,voir_cert_desc_admin,voir_certnais_admin_date,
+                         voir_cert_desc_admin_date)
 from rest_framework import status
 from User.serializer import *
 from User.models import *
@@ -18,7 +19,12 @@ from django.db.models import Count
 class Voir_stat(APIView):
     def get(self,request):    
         
-        data={"cert_naissance":voir_certnais_admin(),"acte_naiss":voir_stat_act_admin(),"cert_desc":voir_cert_desc_admin(),"acte_desc":voir_stat_act_desc_admin()}
+        data={"cert_naissance":voir_certnais_admin(),"acte_naiss":voir_stat_act_naiss_admin(),"cert_desc":voir_cert_desc_admin(),"acte_desc":voir_stat_act_desc_admin()}
+        return Response(data,status=status.HTTP_200_OK)
+class Voir_stat_date(APIView):
+    def get(self,request,date):    
+        
+        data={"cert_naissance":voir_certnais_admin_date(date),"cert_desc":voir_cert_desc_admin_date(date)}
         return Response(data,status=status.HTTP_200_OK)
     
 class Voir_stat_par_hop(APIView):
