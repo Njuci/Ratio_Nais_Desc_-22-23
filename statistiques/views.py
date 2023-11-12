@@ -5,14 +5,14 @@ from User.models import province, TerriVille
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .query_acte import (voir_stat_act_naiss_admin,voir_certnais_admin,voir_stat_act_desc_admin,voir_cert_desc_admin,voir_certnais_admin_date,
-                         voir_cert_desc_admin_date)
+                         voir_cert_desc_admin_date,voir_stat_act_naiss_admin_date,voir_stat_act_desc_admin_date)
 from rest_framework import status
 from User.serializer import *
 from User.models import *
 from django.contrib.auth import authenticate
 from User.views import chek_user,is_access_token_valid,is_user_authorized
 from itertools import groupby
-from .test_liste import voir_certnais_hopital as voir_cert_naiss_par_hop
+from .test_liste import (voir_certnais_hopital as voir_cert_naiss_par_hop,voir_certnais_hopital_date,voir_certdesc_hopital)
 
 from django.db.models import Count
 
@@ -24,7 +24,8 @@ class Voir_stat(APIView):
 class Voir_stat_date(APIView):
     def get(self,request,date):    
         
-        data={"cert_naissance":voir_certnais_admin_date(date),"cert_desc":voir_cert_desc_admin_date(date)}
+        data={"cert_naissance":voir_certnais_admin_date(date),"acte_naiss":voir_stat_act_naiss_admin_date(date),
+              "cert_desc":voir_cert_desc_admin_date(date),"acte_desc":voir_stat_act_desc_admin_date(date)}
         return Response(data,status=status.HTTP_200_OK)
     
 class Voir_stat_par_hop(APIView):
