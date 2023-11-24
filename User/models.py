@@ -139,6 +139,8 @@ class ActeNaiss(models.Model):
     langue_redaction=models.CharField(max_length=20,blank=True)
     url_qrcode=models.CharField(max_length=2000,null=True,blank=True)
     cod_qr=models.ImageField(upload_to="acte_naissance",null=True,blank=True)
+    def __str__(self) -> str:
+        return f'{self.certNais_id.nom_enfant} {self.certNais_id.post_nom_enfant}  {self.certNais_id.prenom_enfant} acte_numero {self.id}'
     
     def code_qrfound(self, *args, **kwargs):
         qr_infos= {"Acte de Naissance N° ":self.pk,"nom":self.certNais_id.nom_enfant,"post_nom":self.certNais_id.post_nom_enfant,"prenom":self.certNais_id.prenom_enfant,"hopital_denom":self.commune.denom}

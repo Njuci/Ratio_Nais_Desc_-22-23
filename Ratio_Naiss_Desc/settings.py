@@ -80,7 +80,7 @@ DATABASES = {
         'USER': 'njucimec',
         'PASSWORD': '3670njci',        
         'HOST': 'db4free.net',
-        'PORT': '3306',
+        'PORT': '3306', 
     }
 }
 
@@ -225,3 +225,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #AUTH_USER_MODEL = 'User.MyUser'
+

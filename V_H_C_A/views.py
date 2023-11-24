@@ -46,15 +46,11 @@ def Get_Territoir_par_prov(request,id):
 
 @api_view(["GET"])
 def Get_CertificatNaissPrint(request,id):
-    
-    
     try:
         certificat=CertificatNaissance.objects.get(id=id)
         certficatSerial=CertiNaissSerial(certificat)
         
-        print(certficatSerial.data)
         ho=(certficatSerial.data['hospital_id'])
-        print(type(ho))
         hosp=Hopital.objects.get(id=ho)
         hospCerial=Hopitalserial(hosp)
         prov=province.objects.get(id=hospCerial.data['prov'])
@@ -62,23 +58,85 @@ def Get_CertificatNaissPrint(request,id):
         tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
         tvCer=TerrVilleSerial(tv)
         Cert={"province":provCerial.data,"terriville":tvCer.data,"hospital":hospCerial.data,"Certificat":certficatSerial.data}
-        
-        
-        
-        print(hospCerial.data)
-        
-        
-        
-        
-        return Response(Cert,status=status.HTTP_200_OK)
-        
+               
+        return Response(Cert,status=status.HTTP_200_OK)     
         
     except Certificat_Desc.DoesNotExist:
         
         return Response({"object":"does not exist"},status=status.HTTP_400_BAD_REQUEST)
+
         
-    
-    
+@api_view(["GET"])
+def Get_CertificatDescesPrint(request,id):
+    try:
+        certificat=Certificat_Desc.objects.get(id=id)
+        certficatSerial=Certi_Desc_Serial(certificat)
+        
+        ho=(certficatSerial.data['hopital_id'])
+        hosp=Hopital.objects.get(id=ho)
+        hospCerial=Hopitalserial(hosp)
+        prov=province.objects.get(id=hospCerial.data['prov'])
+        provCerial=ProvinceSerial(prov)
+        tv=TerriVille.objects.get(id=hospCerial.data['TerriVi'])
+        tvCer=TerrVilleSerial(tv)
+        Cert={"province":provCerial.data,"terriville":tvCer.data,"hospital":hospCerial.data,"Certificat":certficatSerial.data}
+               
+        return Response(Cert,status=status.HTTP_200_OK)     
+        
+    except Certificat_Desc.DoesNotExist:
+        
+        return Response({"object":"does not exist"},status=status.HTTP_400_BAD_REQUEST)
+@api_view(["GET"])
+def Get_Actes_Naiss_Print(request,id):
+    try:
+        acte_naiss=ActeNaiss.objects.get(id=id)
+        acte_serial=ActeNaissSerial(acte_naiss)
+        certificat=CertificatNaissance.objects.get(id=acte_serial.data['certNais_id'])
+        print(1)
+        certficatSerial=CertiNaissSerial(certificat)
+        commune=Commune.objects.get(id=acte_serial.data['commune'])        
+        commune_serial=CommuneSerial(commune)        
+        ho=certficatSerial.data['hospital_id']
+        hosp=Hopital.objects.get(id=ho)
+        hospCerial=Hopitalserial(hosp)
+        prov=province.objects.get(id=commune_serial.data['prov'])
+        provCerial=ProvinceSerial(prov)
+        tv=TerriVille.objects.get(id=commune_serial.data['TerriVi'])
+        tvCer=TerrVilleSerial(tv)
+        Cert={"province":provCerial.data,"terriville":tvCer.data,
+              "commune":commune_serial.data,"acte":acte_serial.data,
+              "hospital":hospCerial.data,"Certificat":certficatSerial.data}
+               
+        return Response(Cert,status=status.HTTP_200_OK)     
+        
+    except ActeNaiss.DoesNotExist:
+        
+        return Response({"object":"does not exist"},status=status.HTTP_400_BAD_REQUEST)
+@api_view(["GET"])
+def Get_Acte_Desc_Print(request,id):
+    try:
+        acte_desc=ActeDesc.objects.get(id=id)
+        acte_serial=Acte_Desc_Serial(acte_desc)
+        certificat=Certificat_Desc.objects.get(id=acte_serial.data['cert_desc_id'])
+        certficatSerial=Certi_Desc_Serial(certificat)
+        commune=Commune.objects.get(id=acte_serial.data['commune'])        
+        commune_serial=CommuneSerial(commune)        
+        
+        hosp=Hopital.objects.get(id=certficatSerial.data['hopital_id'])
+        hospCerial=Hopitalserial(hosp)
+        prov=province.objects.get(id=commune_serial.data['prov'])
+        provCerial=ProvinceSerial(prov)
+        tv=TerriVille.objects.get(id=commune_serial.data['TerriVi'])
+        tvCer=TerrVilleSerial(tv)
+        Cert={"province":provCerial.data,"terriville":tvCer.data,
+              "commune":commune_serial.data,"acte":acte_serial.data,
+              "hospital":hospCerial.data,"Certificat":certficatSerial.data}
+               
+        return Response(Cert,status=status.HTTP_200_OK)     
+        
+    except ActeDesc.DoesNotExist:
+        
+        return Response({"object":"does not exist"},status=status.HTTP_400_BAD_REQUEST)
 class CreateVilleTerr(APIView):
     def post(self,request):
         serial=TerrVilleSerial(data=request.data)
@@ -111,7 +169,9 @@ class Create_certificatNais(APIView):
         if verification_token[0]:
             user=MyUser.objects.get(id=verification_token[1]['user_id'])
             if is_user_authorized(user.user_type,user_type_authorized):
+                print(user.id)
                 hopital=Hopital.objects.get(user=user.id)
+                print(hopital.pk)
                 cert['hospital_id']=hopital.id
                 CertSerial=CertiNaissSerial(data=cert)
                 if CertSerial.is_valid():
@@ -175,7 +235,7 @@ class Create_certificatNais(APIView):
                 cert_naiss=CertificatNaissance.objects.get(id=cert_id,hospital_id=hopital.id)
                 cert_naiss.delete()
                 return Response({"message":"Certificat de naissance a été supprimé avec succès"},status=status.HTTP_201_CREATED)
-            else:
+            else:   
                 return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)    

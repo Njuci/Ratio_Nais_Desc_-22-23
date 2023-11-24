@@ -13,6 +13,9 @@ urlpatterns = [
     path('create_certi_desc/',Create_Cert_Desc.as_view(),name='create_certi_desc'),
     path('create_actedesc',Create_ActeDesc.as_view(),name='create_actedesc'),
     path('print_cert/<int:id>',Get_CertificatNaissPrint,name='print_cert'),
+    path('print_cert_desc/<int:id>',Get_CertificatDescesPrint,name='print_cert_desc'),
+    path('print_acte_naiss/<int:id>',Get_Actes_Naiss_Print,name='print_acte_naiss'),
+    path('print_acte_desc/<int:id>',Get_Acte_Desc_Print,name='print_acte_desc'),    
     path('get_acte_naiss_par_commune/<str:token>',Get_acteNais_par_commune.as_view(),name='get_acte_naiss_par_commune'),
     path("get_certi_desc_par_hopital/<str:token>",Get_CertDesc_par_hopital.as_view(),name='get_certi_desc_par_hopital')
 
