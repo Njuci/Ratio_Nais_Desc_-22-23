@@ -419,6 +419,24 @@ class Create_Cert_Desc(APIView):
                 return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
+    def delete(self,request):
+        token=request.data.get('token')
+        secret_key=settings.SECRET_KEY
+        print(type(token))
+        verification_token=is_access_token_valid(token,secret_key)
+        cert_id=request.data.get("cert_id")
+        user_type_authorized='hopital'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            if is_user_authorized(user.user_type,user_type_authorized):
+                hopital=Hopital.objects.get(user=user.id)
+                cert_naiss=Certificat_Desc.objects.get(id=cert_id,hopital_id=hopital.id)
+                cert_naiss.delete()
+                return Response({"message":"Certificat de naissance a été supprimé avec succès"},status=status.HTTP_201_CREATED)
+            else:   
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)      
+        else:
+            return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
 class Get_CertN_par_hopital(APIView):
     def get(self,request,token):
         token=token
