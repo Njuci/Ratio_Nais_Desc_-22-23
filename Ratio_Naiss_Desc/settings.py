@@ -73,19 +73,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Ratio_Naiss_Desc.wsgi.application'
 
 
+
+
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+#sqlite
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc',
-        'USER': 'njucimec',
-        'PASSWORD': '3670njci',        
-        'HOST': 'db4free.net',
-        'PORT': '3306', 
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
-
 
 '''
 DATABASES = {
@@ -97,6 +96,19 @@ DATABASES = {
         'PASSWORD': 'WWQaQt3ZWBd5Cbimz6Vr',
         'HOST': 'containers-us-west-196.railway.app',
         'PORT': '5693',
+    }
+    
+}
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ratio_nais_desc',
+        'USER': 'root',
+        'PASSWORD': '3670njci',        
+        'HOST': 'localhost',
+        'PORT': '3306', 
     }
 }
 DATABASES = {
