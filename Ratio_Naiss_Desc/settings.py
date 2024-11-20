@@ -81,12 +81,26 @@ WSGI_APPLICATION = 'Ratio_Naiss_Desc.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ratio_nais_desc',
+        'USER': 'root',
+        'PASSWORD': '3670njci',        
+        'HOST': 'localhost',
+        'PORT': '3306', 
+    }
+}
+
+
+
+'''
+
+DATABASES = {
+    'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -101,16 +115,6 @@ DATABASES = {
 }
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc',
-        'USER': 'root',
-        'PASSWORD': '3670njci',        
-        'HOST': 'localhost',
-        'PORT': '3306', 
-    }
-}
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

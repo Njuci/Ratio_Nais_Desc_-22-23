@@ -257,6 +257,7 @@ class Create_ActeNais(APIView):
                     ActNaiss.save()
                     act=ActNaiss.data['id']
                     acte=ActeNaiss.objects.get(id=act)
+                    acte.code_qrfound()
                     serial=ActeNaissSerial(acte)
                     return Response({"message":"Certificat"+ f"{act}"+" a été enregistré avec succès","data":serial.data},status=status.HTTP_201_CREATED)
                 else:
@@ -519,13 +520,17 @@ class Create_ActeDesc(APIView):
             if is_user_authorized(user.user_type,user_type_authorized):
                 commune=Commune.objects.get(user=user.id)
                 act['commune']=commune.id
-                Actdesc=Acte_Desc_Serial(data=act)
-                if Actdesc.is_valid():
-                    Actdesc.save()
-                    act=Actdesc.data['id']
-                    return Response({"message":"Certificat"+ f"{act}"+" a été enregistré avec succès","data":Actdesc.data},status=status.HTTP_201_CREATED)
+                actdesc=Acte_Desc_Serial(data=act)
+                if actdesc.is_valid():
+                    actdesc.save()
+                    act=actdesc.data['id']
+                    acte=ActeDesc.objects.get(id=act)
+                    acte.code_qrfound()
+                    act=Acte_Desc_Serial(acte)
+                    
+                    return Response({"message":"Certificat "+ f"{act.data['id']}"+" a été enregistré avec succès","data":act.data},status=status.HTTP_201_CREATED)
                 else:
-                    message={"message":"les donnees sont mal envoyé","errors":Actdesc.errors}
+                    message={"message":"les donnees sont mal envoyé","errors":actdesc.errors}
                     return Response(message,status=status.HTTP_400_BAD_REQUEST)
                 
             else:
