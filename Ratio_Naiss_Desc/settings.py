@@ -79,6 +79,18 @@ WSGI_APPLICATION = 'Ratio_Naiss_Desc.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 #sqlite
 
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -87,17 +99,6 @@ DATABASES = {
         'PASSWORD': '3670njci',        
         'HOST': 'localhost',
         'PORT': '3306', 
-    }
-}
-
-
-
-'''
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
