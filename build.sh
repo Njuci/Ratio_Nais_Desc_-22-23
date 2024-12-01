@@ -10,4 +10,4 @@ python manage.py collectstatic --noinput
 python manage.py migrate
 
 # Démarrer le serveur
-gunicorn myproject.wsgi:application --bind 0.0.0.0:$PORT
+gunicorn ratio_nais_desc.wsgi:application --bind 0.0.0.0:$PORT

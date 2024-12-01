@@ -79,84 +79,27 @@ WSGI_APPLICATION = 'Ratio_Naiss_Desc.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 #sqlite
 
+from urllib.parse import urlparse
 
+# URL de la base de données
+DATABASE_URL = 'postgresql://ratio_naiss_desc_owner:IbHJQg9WGj0r@ep-black-bread-a5tlodyr.us-east-2.aws.neon.tech/ratio_naiss_desc?sslmode=require'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# Parsing de l'URL de la base de données
+tmpPostgres = urlparse(DATABASE_URL)
 
-
-
-'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc',
-        'USER': 'root',
-        'PASSWORD': '3670njci',        
-        'HOST': 'localhost',
-        'PORT': '3306', 
-    }
-}
-
+# Configuration des bases de données
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'URL':'postgresql://postgres:WWQaQt3ZWBd5Cbimz6Vr@containers-us-west-196.railway.app:5693/railway',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'WWQaQt3ZWBd5Cbimz6Vr',
-        'HOST': 'containers-us-west-196.railway.app',
-        'PORT': '5693',
-    }
-    
-}
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': '',
-        'PASSWORD': '3670njci',
-        'HOST': 'db4free.net',
-        'PORT': '3306',
-    }
-}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-DATABASES['default']['OPTIONS']['charset'] = 'utf8mb4'
-del DATABASES['default']['OPTIONS']['sslmode'] 
-DATABASES['default']['OPTIONS']['ssl'] =  {'ca': os.environ.get('MYSQL_ATTR_SSL_CA')}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ratio_nais_desc2',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306'
+        'NAME': tmpPostgres.path.replace('/', ''),  # Nom de la base de données
+        'USER': tmpPostgres.username,  # Utilisateur
+        'PASSWORD': tmpPostgres.password,  # Mot de passe
+        'HOST': tmpPostgres.hostname,  # Hôte
+        'PORT': tmpPostgres.port or 5432,  # Port par défaut PostgreSQL
     }
 }
 
 
-import requests
-DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'if0_35045019_ratio_naiss_desc2',
-        'USER': 'if0_35045019',
-        'PASSWORD': '0eTOOMK359',
-        'HOST':'185.27.134.10',
-        'PORT' :'3306'
-        
-    }
-}
-
-'''
 
 AUTH_USER_MODEL='User.MyUser'
 # Password validation

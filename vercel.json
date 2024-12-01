@@ -2,16 +2,8 @@
   "version": 2,
   "builds": [
     {
-      "src": "Ratio_Naiss_Desc/wsgi.py",
-      "use": "@vercel/python39",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.9",
-        "env": {
-          "MYSQLCLIENT_CFLAGS": "-I/usr/include/mysql",
-          "MYSQLCLIENT_LDFLAGS": "-L/usr/lib/mysql -lmysqlclient"
-        }
-      }
+      "src": "manage.py",
+      "use": "@vercel/python"
     },
     {
       "src": "build_files.sh",
@@ -28,7 +20,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "Ratio_Naiss_Desc/wsgi.py"
+      "dest": "manage.py"
     }
   ]
 }
