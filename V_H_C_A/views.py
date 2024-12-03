@@ -584,3 +584,26 @@ class Create_ActeDesc(APIView):
         else:
             return Response({"message":"authentification échouée"},status=status.HTTP_401_UNAUTHORIZED)
 
+#get_acte_desc_par_commune
+class Get_acteDesc_par_commune(APIView):
+    def get(self,request,token):
+        token=token
+        secret_key=settings.SECRET_KEY
+        verification_token=is_access_token_valid(token,secret_key)
+        user_type_authorized='commune'
+        if verification_token[0]:
+            user=MyUser.objects.get(id=verification_token[1]['user_id'])
+            try:
+                hptl=Commune.objects.get(user=user.id)
+            except Hopital.DoesNotExist:
+                hptl=None
+            if  is_user_authorized(user.user_type,user_type_authorized):
+                acte_desc= ActeDesc.objects.filter(commune_id=hptl.id).order_by('date_enregistrement')
+                serial= Acte_Desc_Serial(acte_desc,many=True)
+                return Response(serial.data,status=status.HTTP_200_OK)     
+                   
+            else:
+                return Response({"message":"type d'utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+                
+        else:
+            return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)

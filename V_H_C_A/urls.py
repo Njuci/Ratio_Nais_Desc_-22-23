@@ -17,6 +17,7 @@ urlpatterns = [
     path('print_acte_naiss/<int:id>',Get_Actes_Naiss_Print,name='print_acte_naiss'),
     path('print_acte_desc/<int:id>',Get_Acte_Desc_Print,name='print_acte_desc'),    
     path('get_acte_naiss_par_commune/<str:token>',Get_acteNais_par_commune.as_view(),name='get_acte_naiss_par_commune'),
+    path('get_acte_desc_par_commune/<str:token>',Get_acteDesc_par_commune.as_view(),name='get_acte_desc_par_commune'),
     path("get_certi_desc_par_hopital/<str:token>",Get_CertDesc_par_hopital.as_view(),name='get_certi_desc_par_hopital')
 
 
