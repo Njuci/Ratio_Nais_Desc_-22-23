@@ -607,3 +607,34 @@ class Get_acteDesc_par_commune(APIView):
                 
         else:
             return Response({"message":"utilisateur non autorisé"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        
+#voir les certificats de naissance qui n'ont pas encore été actés 
+from django.db.models import Q
+
+class Get_CertN_non_acte(APIView):
+    #tout le monde peut voir les certificats de naissance non actés
+    def get(self,request):
+        #on recupere les certificats de naissance qui n'ont pas encore é té actés sachant que les actes de naissance sont elaboré à partir des certificats de naissance
+        
+        # Filtrer les certificats de naissance non associés à un ActeNaiss
+        certificats_non_actes = CertificatNaissance.objects.filter(~Q(actenaiss__isnull=False))
+
+        
+        serial=CertiNaissSerial(certificats_non_actes,many=True)
+        return Response(serial.data,status=status.HTTP_200_OK)
+
+#voir les certificats de deces qui n'ont pas encore été actés
+
+class Get_CertDesc_non_acte(APIView):
+    #tout le monde peut voir les certificats de deces non actés
+    def get(self,request):
+        #on recupere les certificats de deces qui n'ont pas encore été actés sachant que les actes de deces sont elaboré à partir des certificats de deces
+        
+        # Filtrer les certificats de deces non associés à un ActeDesc
+        certificats_non_actes = Certificat_Desc.objects.filter(~Q(actedesc__isnull=False))
+
+        
+        serial=Certi_Desc_Serial(certificats_non_actes,many=True)
+        return Response(serial.data,status=status.HTTP_200_OK)
+    

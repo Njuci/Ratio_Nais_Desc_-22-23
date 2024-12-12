@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from User.models import province, TerriVille
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .query_acte import (voir_stat_act_naiss_admin,voir_certnais_admin,voir_stat_act_desc_admin,voir_cert_desc_admin,voir_certnais_admin_date,
+from .query_acte import (voir_stat_act_naiss_admin,voir_certnais_admin,voir_stat_act_desc_admin,voir_cert_desc_admin,voir_certnais_admin_date, voir_stat_par_commune,
                          voir_cert_desc_admin_date,voir_stat_act_naiss_admin_date,voir_stat_act_desc_admin_date)
 from rest_framework import status
 from User.serializer import *
@@ -47,3 +47,24 @@ class Voir_stat_par_hop(APIView):
             
             
         return Response({"message":"invalide token"},status=status.HTTP_401_UNAUTHORIZED)
+    
+    
+    # voir les statistiques par commune
+class Voir_stat_par_commune(APIView):
+    def get(self,request,token):
+        user_val=is_access_token_valid(token,settings.SECRET_KEY)
+        
+        if user_val[0]:
+            user=MyUser.objects.get(id=user_val[1]['user_id'])
+            if is_user_authorized('commune',user.user_type):
+                commune=Commune.objects.get(user=user)
+                cert_naiss=voir_stat_par_commune(commune.id)
+                return Response({"acte_naissance":cert_naiss[0],'acte_deces':cert_naiss[1]},status=status.HTTP_200_OK)
+            else:
+                return Response({"message":"type d'utilisateur non autorisé "},status=status.HTTP_401_UNAUTHORIZED)
+            
+            
+            
+        return Response({"message":"invalide token"},status=status.HTTP_401_UNAUTHORIZED)
+    
+    # voir les statistiques par territoire

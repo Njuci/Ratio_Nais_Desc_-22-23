@@ -333,3 +333,79 @@ def voir_stat_act_desc_admin_date(date:str):
     
     return stat
  
+ 
+def voir_stat_par_commune(id:int):
+   # acte de naissance et acte de deces que lq commune a enregistrer
+    stat=[]
+    try:
+                
+        acte_naiss =ActeNaiss.objects.values('date_enregistrement', 'certNais_id__sexe_enfant').filter(commune__id=id).annotate(count=Count('id'))
+    except ActeNaiss.DoesNotExist:
+        messqage={}
+            # Triez les certificats par date
+    actes_tries = sorted(acte_naiss, key=lambda x: x['date_enregistrement'])
+
+            # Groupez les certificats par date
+    groupes_actes= groupby(actes_tries, key=lambda x: x['date_enregistrement'])
+        
+    
+         # Parcourez les groupes et affichez le nombre de filles et de garçons pour chaque date
+    for date_deliv_acte, groupe in groupes_actes:
+        
+        nombre_filles = 0
+        nombre_garcons = 0
+        stata={ }   
+            
+        for certificat in groupe:
+            sexe_enfant = certificat['certNais_id__sexe_enfant']
+            nombre_certificats = certificat['count']
+            print(sexe_enfant,nombre_certificats)
+                    
+            if sexe_enfant == 'f':
+                nombre_filles += nombre_certificats
+            elif sexe_enfant == 'm':
+                nombre_garcons += nombre_certificats
+                d=+1
+            stata['date']=date_deliv_acte
+            stata['garçon']=nombre_garcons
+            stata['fille']=nombre_filles
+            stata['total']=stata['fille']+stata['garçon']
+        stat.append(stata)    
+    stat=ordre_croisannt(stat)        
+    
+    stat2=[]
+    try:
+                
+        acte_desc =ActeDesc.objects.values('date_enregistrement', 'cert_desc_id__sexe_defunt').filter(commune__id=id).annotate(count=Count('id'))
+    except ActeDesc.DoesNotExist:
+        messqage={}
+            # Triez les certificats par date
+    actes_tries = sorted(acte_desc, key=lambda x: x['date_enregistrement'])
+    
+                # Groupez les certificats par date
+    groupes_actes= groupby(actes_tries, key=lambda x: x['date_enregistrement'])
+          
+     
+            # Parcourez les groupes et affichez le nombre de filles et de garçons pour chaque date
+    for date_deliv_acte, groupe in groupes_actes:
+                
+            nombre_filles = 0
+            nombre_garcons = 0
+            stata={ }   
+                    
+            for certificat in groupe:
+                sexe_enfant = certificat['cert_desc_id__sexe_defunt']
+                nombre_certificats = certificat['count']
+                print(sexe_enfant,nombre_certificats)
+                            
+                if sexe_enfant == 'f':
+                    nombre_filles += nombre_certificats
+                elif sexe_enfant == 'm':
+                    nombre_garcons += nombre_certificats
+                    d=+1
+                stata['date']=date_deliv_acte
+                stata['garçon']=nombre_garcons
+                stata['fille']=nombre_filles
+                stata['total']=stata['fille']+stata['garçon']
+            stat2.append(stata)
+    return stat,stat2

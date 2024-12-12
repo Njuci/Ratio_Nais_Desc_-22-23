@@ -18,7 +18,10 @@ urlpatterns = [
     path('print_acte_desc/<int:id>',Get_Acte_Desc_Print,name='print_acte_desc'),    
     path('get_acte_naiss_par_commune/<str:token>',Get_acteNais_par_commune.as_view(),name='get_acte_naiss_par_commune'),
     path('get_acte_desc_par_commune/<str:token>',Get_acteDesc_par_commune.as_view(),name='get_acte_desc_par_commune'),
-    path("get_certi_desc_par_hopital/<str:token>",Get_CertDesc_par_hopital.as_view(),name='get_certi_desc_par_hopital')
+    path("get_certi_desc_par_hopital/<str:token>",Get_CertDesc_par_hopital.as_view(),name='get_certi_desc_par_hopital'),
+    path("get_cert_nais_non_acte",Get_CertN_non_acte.as_view(),name='get_cert_nais_non_acte'),
+    path("get_cert_dec_non_cert",Get_CertDesc_non_acte.as_view(),name='get_acte_nais_non_cert'),
+    
 
 
 ]
